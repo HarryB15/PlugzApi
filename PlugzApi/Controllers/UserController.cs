@@ -26,11 +26,6 @@ namespace PlugzApi.Controllers
             await user.CreateUser();
             return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error.errorMsg);
         }
-        [HttpGet]
-        public int Test()
-        {
-            return 1;
-        }
     }
 }
 

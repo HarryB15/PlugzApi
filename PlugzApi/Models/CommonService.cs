@@ -73,7 +73,7 @@ namespace PlugzApi.Models
         }
         public void Log(Exception ex)
         {
-            
+            SentrySdk.CaptureException(ex);
         }
     }
 }

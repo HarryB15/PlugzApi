@@ -1,13 +1,23 @@
-﻿using PlugzApi.Models;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using PlugzApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers(config => config.Filters.Add(new ProducesAttribute("application/json")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.WebHost.UseSentry(o =>
+{
+    o.Dsn = "https://e3bfbc362cec680624b2da747b9f96c5@o4504622977974272.ingest.us.sentry.io/4507613965058048";
+    o.Debug = true;
+    o.TracesSampleRate = 0.5;
+    o.ProfilesSampleRate = 0.5;
+    o.FlushOnCompletedRequest = true;
+});
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
