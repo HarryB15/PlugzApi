@@ -18,13 +18,13 @@ namespace PlugzApi.Controllers
             Users user = new Users();
             user.userId = userId;
             await user.GetUser();
-            return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error.errorMsg);
+            return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error);
         }
         [HttpPost]
         public async Task<ActionResult<Users>> CreateUser(Users user)
         {
             await user.CreateUser();
-            return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error.errorMsg);
+            return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error);
         }
     }
 }
