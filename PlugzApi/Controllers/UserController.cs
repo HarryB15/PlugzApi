@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PlugzApi.Models;
 using Microsoft.Graph.Models;
+using PlugzApi.Interfaces;
 
 namespace PlugzApi.Controllers
 {
@@ -12,6 +13,11 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly VerificationCodeController _verificationCodeController;
+        public UserController(IEmailService emailService)
+        {
+            _verificationCodeController = new VerificationCodeController(emailService);
+        }
         [HttpGet("{userId:int}")]
         public async Task<ActionResult<Users>> GetUser(int userId)
         {
@@ -24,7 +30,20 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult<Users>> CreateUser(Users user)
         {
             await user.CreateUser();
-            return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error);
+            if(user.error == null)
+            {
+                var verificationCode = new VerificationCodes()
+                {
+                    userId = user.userId,
+                    email = user.email
+                };
+                await _verificationCodeController.SendVerificationCode(verificationCode);
+                return Ok(user);
+            }
+            else
+            {
+                return StatusCode(user.error.errorCode, user.error);
+            }
         }
     }
 }

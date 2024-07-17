@@ -11,6 +11,7 @@ namespace PlugzApi.Models
         public SqlDataReader? sdr = null;
         [JsonIgnore]
         public Error? error { get; set; }
+        public int userId { get; set; }
     }
 }
 

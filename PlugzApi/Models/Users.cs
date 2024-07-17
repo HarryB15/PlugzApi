@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using PlugzApi.Interfaces;
+using PlugzApi.Services;
 
 namespace PlugzApi.Models
 {
 	public class Users: Login
     {
-		public int userId { get; set; }
 		public string name { get; set; } = "";
+        public bool verified { get; set; }
         public async Task GetUser()
         {
             try
@@ -21,6 +23,7 @@ namespace PlugzApi.Models
                 {
                     name = (string)sdr["name"];
                     email = (string)sdr["email"];
+                    verified = (bool)sdr["verified"];
                 }
                 else
                 {

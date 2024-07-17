@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using PlugzApi.Interfaces;
+using PlugzApi.Services;
 
 namespace PlugzApi.Models
 {

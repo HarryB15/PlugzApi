@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using PlugzApi.Models;
 
-namespace PlugzApi.Models
+namespace PlugzApi.Services
 {
 	public class CommonService
 	{
