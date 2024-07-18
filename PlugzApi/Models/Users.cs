@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
