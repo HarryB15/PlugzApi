@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using PlugzApi.Interfaces;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
@@ -10,28 +9,43 @@ namespace PlugzApi.Models
     {
 		public string name { get; set; } = "";
         public bool verified { get; set; }
+        private bool tokenExpired = false;
         public async Task GetUser()
         {
             try
             {
-                con = await CommonService.Instance.Open();
-                cmd = new SqlCommand("GetUser", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                sdr = await cmd.ExecuteReaderAsync();
-                if (sdr.Read())
+                var tokenValid = ValidateJwtToken();
+                if (tokenExpired)
                 {
-                    name = (string)sdr["name"];
-                    email = (string)sdr["email"];
-                    verified = (bool)sdr["verified"];
-                }
-                else
-                {
-                    error = new Error()
+                    tokenValid = true;
+                    tokenExpired = false;
+                    jwt = CommonService.Instance.GenerateJwt(userId);
+                    if (jwt == null)
                     {
-                        errorCode = StatusCodes.Status404NotFound,
-                        errorMsg = "Unable to find a user with the details entered"
-                    };
+                        error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    }
+                }
+                if (tokenValid)
+                {
+                    con = await CommonService.Instance.Open();
+                    cmd = new SqlCommand("GetUser", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                    sdr = await cmd.ExecuteReaderAsync();
+                    if (sdr.Read())
+                    {
+                        name = (string)sdr["name"];
+                        email = (string)sdr["email"];
+                        verified = (bool)sdr["verified"];
+                    }
+                    else
+                    {
+                        error = new Error()
+                        {
+                            errorCode = StatusCodes.Status404NotFound,
+                            errorMsg = "Unable to find a user with the details entered"
+                        };
+                    }
                 }
             }
             catch(Exception ex)
@@ -70,6 +84,11 @@ namespace PlugzApi.Models
                     if (sdr.Read())
                     {
                         userId = (int)sdr["UserId"];
+                        jwt = CommonService.Instance.GenerateJwt(userId);
+                        if (jwt == null)
+                        {
+                            error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                        }
                     }
                 }
             }
@@ -96,6 +115,39 @@ namespace PlugzApi.Models
             {
                 CommonService.Instance.Log(ex);
                 return true;
+            }
+        }
+        private bool ValidateJwtToken()
+        {
+            try
+            {
+                string publicKey = File.ReadAllText(Directory.GetCurrentDirectory() + "/Auth/jwtPublicKey.pem");
+                RSA publicRsa = RSA.Create();
+                publicRsa.ImportFromPem(publicKey.ToCharArray());
+                var publicKeySecurityKey = new RsaSecurityKey(publicRsa);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = publicKeySecurityKey,
+                    ClockSkew = TimeSpan.Zero
+                };
+                var claims = tokenHandler.ValidateToken(jwt, validationParameters, out SecurityToken validatedToken);
+                userId = int.Parse(claims.FindFirst("userId")!.Value);
+                return true;
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                tokenExpired = true;
+                return false;
+            }
+            catch (Exception)
+            {
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                return false;
             }
         }
     }

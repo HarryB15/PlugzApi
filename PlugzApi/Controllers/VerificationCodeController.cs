@@ -36,7 +36,7 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> ValidateVerificationCode(VerificationCodes verificationCode)
         {
             await verificationCode.ValidateVerificationCode();
-            return (verificationCode.error == null) ? Ok() : StatusCode(verificationCode.error.errorCode, verificationCode.error);
+            return (verificationCode.error == null) ? Ok(verificationCode) : StatusCode(verificationCode.error.errorCode, verificationCode.error);
         }
     }
 }

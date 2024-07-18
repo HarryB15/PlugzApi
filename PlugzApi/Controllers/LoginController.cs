@@ -12,12 +12,12 @@ namespace PlugzApi.Controllers
     public class LoginController : ControllerBase
     {
         [HttpPost()]
-        public async Task<ActionResult> Login(Login login)
+        public async Task<ActionResult<Login>> Login(Login login)
         {
             var valid = await login.ValidateUser();
             if (valid && login.error == null)
             {
-                return Ok();
+                return Ok(login);
             }
             else if (login.error != null)
             {

@@ -18,11 +18,11 @@ namespace PlugzApi.Controllers
         {
             _verificationCodeController = new VerificationCodeController(emailService);
         }
-        [HttpGet("{userId:int}")]
-        public async Task<ActionResult<Users>> GetUser(int userId)
+        [HttpGet("{jwt}")]
+        public async Task<ActionResult<Users>> GetUser(string jwt)
         {
             Users user = new Users();
-            user.userId = userId;
+            user.jwt = jwt;
             await user.GetUser();
             return (user.error == null) ? Ok(user) : StatusCode(user.error.errorCode, user.error);
         }

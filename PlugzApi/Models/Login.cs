@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using PlugzApi.Interfaces;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
@@ -10,6 +9,7 @@ namespace PlugzApi.Models
     {
         public string email { get; set; } = "";
         public string password { get; set; } = "";
+        public string? jwt { get; set; } = null;
         public async Task<bool> ValidateUser()
         {
             var valid = false;
@@ -26,6 +26,15 @@ namespace PlugzApi.Models
                     var expHashedPassword =  (string)sdr["HashedPassword"];
                     var actualHashedPassword = HashPassword(salt);
                     valid = expHashedPassword == actualHashedPassword;
+                    if (valid)
+                    {
+                        userId = (int)sdr["UserId"];
+                        jwt = CommonService.Instance.GenerateJwt(userId);
+                        if(jwt == null)
+                        {
+                            error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                        }
+                    }
                 }
                 if (!valid)
                 {

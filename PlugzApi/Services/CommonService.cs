@@ -1,5 +1,9 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using PlugzApi.Models;
 
 namespace PlugzApi.Services
@@ -75,6 +79,40 @@ namespace PlugzApi.Services
         public void Log(Exception ex)
         {
             SentrySdk.CaptureException(ex);
+        }
+
+        public string? GenerateJwt(int userId)
+        {
+            try
+            {
+                string privateKey = File.ReadAllText(Directory.GetCurrentDirectory() + "/Auth/jwtPrivateKey.pem");
+                RSA privateRsa = RSA.Create();
+                privateRsa.ImportFromPem(privateKey.ToCharArray());
+                var privateKeySecurityKey = new RsaSecurityKey(privateRsa);
+                var signingCredentials = new SigningCredentials(privateKeySecurityKey, SecurityAlgorithms.RsaSha256);
+                var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+                var claims = new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, "userId"),
+                    new Claim("userId", userId.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, iat)
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    SigningCredentials = signingCredentials
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(token);
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+                return null;
+            }
         }
     }
 }

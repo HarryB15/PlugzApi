@@ -6,12 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PlugzApi.Models
 {
-	public class VerificationCodes: Base
+	public class VerificationCodes: Login
 	{
 		public int codeId { get; set; }
 		public int code { get; set; }
         public int submittedCode { get; set; }
-        public string email { get; set; } = "";
 		public async Task InsVerificationCode()
 		{
             try
@@ -40,6 +39,11 @@ namespace PlugzApi.Models
                 {
                     await DelVerificationCode();
                     await UpdUserVerified();
+                    jwt = CommonService.Instance.GenerateJwt(userId);
+                    if (jwt == null)
+                    {
+                        error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    }
                 }
                 else
                 {
