@@ -7,9 +7,8 @@ namespace PlugzApi.Models
 {
 	public class Login: Base
     {
-        public string email { get; set; } = "";
+        public string emailUsername { get; set; } = "";
         public string password { get; set; } = "";
-        public string? jwt { get; set; } = null;
         public async Task<bool> ValidateUser()
         {
             var valid = false;
@@ -18,7 +17,7 @@ namespace PlugzApi.Models
                 con = await CommonService.Instance.Open();
                 cmd = new SqlCommand("GetUsersPassword", con);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+                cmd.Parameters.Add("@email_userName", SqlDbType.VarChar).Value = emailUsername;
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
                 {

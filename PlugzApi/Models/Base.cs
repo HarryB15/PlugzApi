@@ -12,6 +12,7 @@ namespace PlugzApi.Models
         [JsonIgnore]
         public Error? error { get; set; }
         public int userId { get; set; }
+        public string? jwt { get; set; } = null;
     }
 }
 

@@ -10,9 +10,10 @@ namespace PlugzApi.Models
 {
 	public class Users: Login
     {
-		public string name { get; set; } = "";
+		public string userName { get; set; } = "";
         public bool verified { get; set; }
         private bool tokenExpired = false;
+        public string email { get; set; } = "";
         public async Task GetUser()
         {
             try
@@ -37,7 +38,7 @@ namespace PlugzApi.Models
                     sdr = await cmd.ExecuteReaderAsync();
                     if (sdr.Read())
                     {
-                        name = (string)sdr["name"];
+                        userName = (string)sdr["UserName"];
                         email = (string)sdr["email"];
                         verified = (bool)sdr["verified"];
                     }
@@ -64,22 +65,14 @@ namespace PlugzApi.Models
             try
             {
                 con = await CommonService.Instance.Open();
-                var userExists = await CheckUserExists();
-                if (userExists)
-                {
-                    error = new Error()
-                    {
-                        errorMsg = "An account already exists with these details",
-                        errorCode = StatusCodes.Status400BadRequest
-                    };
-                }
-                else
+                error = await CheckUserExists();
+                if (error == null)
                 {
                     string salt = BCrypt.Net.BCrypt.GenerateSalt(12);
                     var hashedPassword = HashPassword(salt);
                     cmd = new SqlCommand("InsertUsers", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@name", SqlDbType.VarChar).Value = name;
+                    cmd.Parameters.Add("@userName", SqlDbType.VarChar).Value = userName;
                     cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
                     cmd.Parameters.Add("@salt", SqlDbType.VarChar).Value = salt;
                     cmd.Parameters.Add("@hashedPassword", SqlDbType.VarChar).Value = hashedPassword;
@@ -102,22 +95,34 @@ namespace PlugzApi.Models
             }
             await CommonService.Instance.Close(con, sdr);
         }
-        private async Task<bool> CheckUserExists()
+        private async Task<Error?> CheckUserExists()
         {
             try
             {
                 cmd = new SqlCommand("CheckUserExists", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
-                sdr = await cmd.ExecuteReaderAsync();
-                var userExists = sdr.Read();
-                sdr.Close();
-                return userExists;
+                cmd.Parameters.Add("@userName", SqlDbType.VarChar).Value = userName;
+                cmd.Parameters.Add("@errorMsg", SqlDbType.VarChar, 100).Direction = ParameterDirection.Output;
+                await cmd.ExecuteNonQueryAsync();
+                string? errorMsg = (cmd.Parameters["@errorMsg"].Value != DBNull.Value) ? (string)cmd.Parameters["@errorMsg"].Value : null;
+                if(errorMsg == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new Error()
+                    {
+                        errorMsg = errorMsg,
+                        errorCode = StatusCodes.Status400BadRequest
+                    };
+                }
             }
             catch(Exception ex)
             {
                 CommonService.Instance.Log(ex);
-                return true;
+                return CommonService.Instance.GetUnexpectedErrrorMsg();
             }
         }
         private bool ValidateJwtToken()
