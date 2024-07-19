@@ -27,6 +27,7 @@
     <None Remove="Services\" />
     <None Remove="Interfaces\" />
     <None Remove="Auth\" />
+    <None Remove="Auth\jwtPrivateKey.pem" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -36,8 +37,6 @@
     <Folder Include="Auth\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Auth\jwtPrivateKey.pem">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="Auth\jwtPrivateKey.pem" />
   </ItemGroup>
 </Project>
