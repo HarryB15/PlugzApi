@@ -10,7 +10,7 @@ namespace PlugzApi.Models
 	{
 		public int codeId { get; set; }
 		public int code { get; set; }
-        public int submittedCode { get; set; }
+        public int? submittedCode { get; set; }
 		public async Task InsVerificationCode()
 		{
             try
