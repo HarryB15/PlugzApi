@@ -133,13 +133,15 @@ namespace PlugzApi.Models
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = publicKeySecurityKey,
                     ClockSkew = TimeSpan.Zero
                 };
                 var claims = tokenHandler.ValidateToken(jwt, validationParameters, out SecurityToken validatedToken);
                 userId = int.Parse(claims.FindFirst("userId")!.Value);
+                validationParameters.ValidateLifetime = true; //need to get user id before checking if token is expired
+                tokenHandler.ValidateToken(jwt, validationParameters, out SecurityToken validatedToken2);
                 return true;
             }
             catch (SecurityTokenExpiredException)
