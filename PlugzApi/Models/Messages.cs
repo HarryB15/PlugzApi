@@ -57,8 +57,9 @@ namespace PlugzApi.Models
                         messageText = (string)sdr["MessageText"],
                         senderUserId = (int)sdr["SenderUserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
-                        sentDatetime = (DateTime)sdr["SentDatetime"]
+                        sentDatetime = (DateTime)sdr["SentDatetime"],
                     };
+                    message.userIsSender = (message.senderUserId == userId);
                     messages.Add(message);
                 }
             }
