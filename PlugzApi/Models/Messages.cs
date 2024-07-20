@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Graph.Models;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
@@ -36,6 +37,38 @@ namespace PlugzApi.Models
             }
             await CommonService.Instance.Close(con, sdr);
         }
-
+        public async Task<List<Messages>> GetMessages(int userId, int contactUserId)
+        {
+            List<Messages> messages = new List<Messages>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetMessages", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@contactUserId", SqlDbType.Int).Value = contactUserId;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Messages message = new Messages()
+                    {
+                        messageId = (int)sdr["MessageId"],
+                        messageTypeId = (byte)sdr["MessageTypeId"],
+                        messageText = (string)sdr["MessageText"],
+                        senderUserId = (int)sdr["SenderUserId"],
+                        receiverUserId = (int)sdr["ReceiverUserId"],
+                        sentDatetime = (DateTime)sdr["SentDatetime"]
+                    };
+                    messages.Add(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
+            return messages;
+        }
     }
 }

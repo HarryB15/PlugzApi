@@ -27,7 +27,6 @@ namespace PlugzApi.Models
                 {
                     Contacts contact = new Contacts()
                     {
-
                         contactId = (int)sdr["ContactId"],
                         lastMessageDate = (sdr["LastMessageDate"] != DBNull.Value) ? (DateTime)sdr["LastMessageDate"] : null,
                         isConnected = (bool)sdr["IsConnected"],
