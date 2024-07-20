@@ -58,7 +58,30 @@ namespace PlugzApi.Models
             await CommonService.Instance.Close(con, sdr);
             return contacts;
         }
-
+        public async Task GetContact()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetContact", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@contactUserId", SqlDbType.Int).Value = contactUser.userId;
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    contactId = (int)sdr["ContactId"];
+                    isConnected = (bool)sdr["IsConnected"];
+                    contactUser.userName = (string)sdr["UserName"];
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
+        }
     }
 }
 
