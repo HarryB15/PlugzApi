@@ -42,7 +42,7 @@ namespace PlugzApi.Models
                         price = (decimal)sdr["Price"],
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"],
-                        buyOrSell = (char)sdr["BuyOrSell"],
+                        buyOrSell = Convert.ToChar(sdr["BuyOrSell"]),
                         sentDatetime = (DateTime)sdr["SentDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
                         userName = (string)sdr["UserName"],
