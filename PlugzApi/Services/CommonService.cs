@@ -5,6 +5,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using PlugzApi.Models;
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using System.Text;
 
 namespace PlugzApi.Services
 {
@@ -112,6 +115,19 @@ namespace PlugzApi.Services
             {
                 Log(ex);
                 return null;
+            }
+        }
+        public BlobServiceClient GetBlobServiceClient()
+        {
+            return new BlobServiceClient(new Uri(_configuration["Azure:Storage"]!), new DefaultAzureCredential());
+        }
+        public string HashString(string message, string key)
+        {
+            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
+            {
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+                byte[] hashBytes = hmac.ComputeHash(messageBytes);
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }
     }
