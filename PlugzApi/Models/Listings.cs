@@ -65,15 +65,15 @@ namespace PlugzApi.Models
         {
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient("listing-images");
-                await containerClient.CreateIfNotExistsAsync();
-                var hashedListingId =  CommonService.Instance.HashString(listingId.ToString(), "Listings");
-                for(var i = 0; i < images.Count; i++)
+                AzureStorageService azureStorageService = new AzureStorageService();
+                var hashedListingId = CommonService.Instance.HashString(listingId.ToString(), "Listings");
+                for (var i = 0; i < images.Count; i++)
                 {
-                    BlobClient blobClient = containerClient.GetBlobClient($"{hashedListingId}/{i}.txt");
-                    using MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(images[i]));
-                    await blobClient.UploadAsync(memoryStream, overwrite: true);
+                    if (!await azureStorageService.StoreImage(images[i], "listing-images", $"{hashedListingId}/{i}.txt"))
+                    {
+                        error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -141,25 +141,16 @@ namespace PlugzApi.Models
         {
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient("listing-images");
+                AzureStorageService azureStorageService = new AzureStorageService();
                 var hashedListingId = CommonService.Instance.HashString(listingId.ToString(), "Listings");
-                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: hashedListingId);
-                BlobClient blobClient;
-                Azure.Response<BlobDownloadInfo> response;
-                foreach (var blob in blobs)
+                var azureImages = await azureStorageService.GetPhotos("listing-images", hashedListingId);
+                if (azureImages != null)
                 {
-                    blobClient = containerClient.GetBlobClient(blob.Name);
-                    response = await blobClient.DownloadAsync();
-                    var image = "";
-                    using (var streamReader = new StreamReader(response.Value.Content))
-                    {
-                        while (!streamReader.EndOfStream)
-                        {
-                            image += await streamReader.ReadLineAsync();
-                        }
-                        images.Add(image);
-                    }
+                    images = azureImages; 
+                }
+                else
+                {
+                    error = CommonService.Instance.GetUnexpectedErrrorMsg();
                 }
             }
             catch (Exception ex)
