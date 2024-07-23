@@ -17,12 +17,10 @@ namespace PlugzApi.Models
         public decimal price { get; set; }
         public byte minUserRatings { get; set; }
         public short? minPurchases { get; set; }
-        public short? minSales { get; set; }
         public decimal lat { get; set; }
         public decimal lng { get; set; }
-        public char buyOrSell { get; set; }
         public bool isPublic { get; set; }
-        public DateTime sentDatetime { get; set; }
+        public DateTime createdDatetime { get; set; }
         public DateTime expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
@@ -41,10 +39,8 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                 cmd.Parameters.Add("@minUserRatings", SqlDbType.TinyInt).Value = minUserRatings;
                 cmd.Parameters.Add("@minPurchases", SqlDbType.SmallInt).Value = minPurchases;
-                cmd.Parameters.Add("@minSales", SqlDbType.SmallInt).Value = minSales;
                 cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
                 cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
-                cmd.Parameters.Add("@buyOrSell", SqlDbType.Char).Value = buyOrSell;
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
                 sdr = await cmd.ExecuteReaderAsync();
@@ -122,10 +118,8 @@ namespace PlugzApi.Models
                         price = (decimal)sdr["Price"],
                         minUserRatings = (byte)sdr["MinUserRatings"],
                         minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null,
-                        minSales = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinSales"] : null,
-                        buyOrSell = Convert.ToChar(sdr["BuyOrSell"]),
                         isPublic = (bool)sdr["IsPublic"],
-                        sentDatetime = (DateTime)sdr["SentDatetime"],
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
                     };
                     listings.Add(listing);

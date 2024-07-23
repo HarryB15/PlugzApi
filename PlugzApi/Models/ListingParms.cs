@@ -13,7 +13,6 @@ namespace PlugzApi.Models
         public decimal maxPrice { get; set; }
         public decimal minPrice { get; set; }
         public bool connectionsOnly { get; set; }
-        public string buyOrsell { get; set; } = "";
         public int maxDist { get; set; }
         public List<Listings> results { get; set; } = new List<Listings>();
 
@@ -30,7 +29,6 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@maxPrice", SqlDbType.Decimal).Value = maxPrice;
                 cmd.Parameters.Add("@minPrice", SqlDbType.Decimal).Value = minPrice;
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
-                cmd.Parameters.Add("@buyOrsell", SqlDbType.VarChar).Value = buyOrsell;
                 cmd.Parameters.Add("@maxDist", SqlDbType.Int).Value = maxDist;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
@@ -43,8 +41,7 @@ namespace PlugzApi.Models
                         price = (decimal)sdr["Price"],
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"],
-                        buyOrSell = Convert.ToChar(sdr["BuyOrSell"]),
-                        sentDatetime = (DateTime)sdr["SentDatetime"],
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
                         userName = (string)sdr["UserName"],
                         isConnected = (bool)sdr["IsConnected"]
