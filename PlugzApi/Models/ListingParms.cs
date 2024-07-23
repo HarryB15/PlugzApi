@@ -2,6 +2,7 @@
 using PlugzApi.Services;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Graph.Models;
 
 namespace PlugzApi.Models
 {
@@ -49,6 +50,10 @@ namespace PlugzApi.Models
                         isConnected = (bool)sdr["IsConnected"]
                     };
                     results.Add(listing);
+                }
+                foreach (var listing in results)
+                {
+                    await listing.GetImages();
                 }
             }
             catch (Exception ex)
