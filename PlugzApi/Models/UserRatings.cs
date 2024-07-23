@@ -12,7 +12,30 @@ namespace PlugzApi.Models
 		public int ratingId { get; set; }
         public int listingId { get; set; }
         public byte rating { get; set; }
-
+        public int totalRatings { get; set; }
+        public decimal avgRating { get; set; }
+        public async Task GetUserRating()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUserRating", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    avgRating = (decimal)sdr["AvgRating"];
+                    totalRatings = (int)sdr["TotalRatings"];
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
+        }
         public async Task UpdInsUserRatings()
         {
             try

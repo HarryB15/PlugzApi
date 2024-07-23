@@ -8,6 +8,14 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class UserRatingsController : ControllerBase
     {
+        [HttpGet("{userId:int}")]
+        public async Task<ActionResult> GetUserRatings(int userId)
+        {
+            UserRatings rating = new UserRatings();
+            rating.userId = userId;
+            await rating.GetUserRating();
+            return (rating.error == null) ? Ok(rating) : StatusCode(rating.error.errorCode, rating.error);
+        }
         [HttpPost]
         public async Task<ActionResult> UpdInsUserRatings(UserRatings rating)
         {
