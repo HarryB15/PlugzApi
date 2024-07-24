@@ -13,6 +13,8 @@ namespace PlugzApi.Models
         public int totalSales { get; set; }
         public int liveSales { get; set; }
         public int awaitingAccSales { get; set; }
+        public int totalListings { get; set; }
+        public int liveListings { get; set; }
         public UserRatings rating { get; set; } = new UserRatings();
 		public async Task GetUsersStats()
 		{
@@ -32,6 +34,8 @@ namespace PlugzApi.Models
                     totalSales = (int)sdr["TotalSales"];
                     liveSales = (int)sdr["LiveSales"];
                     awaitingAccSales = (int)sdr["AwaitingAccSales"];
+                    totalListings = (int)sdr["TotalListings"];
+                    liveListings = (int)sdr["LiveListings"];
                     rating.avgRating = (decimal)sdr["avgRating"];
                 }
             }
