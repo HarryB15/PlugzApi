@@ -15,6 +15,7 @@ namespace PlugzApi.Models
         public int awaitingAccSales { get; set; }
         public int totalListings { get; set; }
         public int liveListings { get; set; }
+        public int totalConnections { get; set; }
         public UserRatings rating { get; set; } = new UserRatings();
 		public async Task GetUsersStats()
 		{
@@ -37,6 +38,7 @@ namespace PlugzApi.Models
                     totalListings = (int)sdr["TotalListings"];
                     liveListings = (int)sdr["LiveListings"];
                     rating.avgRating = (decimal)sdr["avgRating"];
+                    totalConnections = (int)sdr["TotalConnections"];
                 }
             }
             catch (Exception ex)

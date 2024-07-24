@@ -63,6 +63,36 @@ namespace PlugzApi.Services
                 return CommonService.Instance.GetUnexpectedErrrorMsg();
             }
         }
+        public Error? SendResetPasswordEmail(string password, string userName, string toAddress)
+        {
+            try
+            {
+                string subject = "Reset Password";
+                string body = header + $"<p><span class='large-text'>Hi {userName}</span><br><br>" +
+                    $"<br><br>We have received a request to reset the password for your account. " +
+                    $"Your new password can be found below.</p>" +
+                    $"<div class='code-div'><p><span class='large-text'>Password:</span><br>" +
+                    $"<span class='code-span'>{password}</span></p></div>" +
+                    $"<p><span class='small-text'>If you did not submit this request please reply to this email ASAP.</span><br><br>" +
+                    $"Thank you for using our services.<br><br></p>" + footer;
+
+                MailMessage message = new MailMessage(fromAddress, toAddress, subject, body);
+                message.IsBodyHtml = true;
+
+                SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587);
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new System.Net.NetworkCredential(fromAddress, _configuration["EmailPassword"]);
+                client.Send(message);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                return CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+        }
     }
 }
 
