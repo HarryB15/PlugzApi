@@ -13,6 +13,8 @@ namespace PlugzApi.Models
         public Error? error { get; set; }
         public int userId { get; set; }
         public string? jwt { get; set; } = null;
+        public decimal? lat { get; set; }
+        public decimal? lng { get; set; }
     }
 }
 
