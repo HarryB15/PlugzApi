@@ -28,6 +28,12 @@ namespace PlugzApi.Controllers
             var posts = await post.GetUsersPosts();
             return (post.error == null) ? Ok(posts) : StatusCode(post.error.errorCode, post.error);
         }
+        [HttpPut]
+        public async Task<ActionResult> UpdPost(Posts post)
+        {
+            await post.UpdPost();
+            return (post.error == null) ? Ok() : StatusCode(post.error.errorCode, post.error);
+        }
     }
 }
 

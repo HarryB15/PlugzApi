@@ -73,6 +73,7 @@ namespace PlugzApi.Models
                     Posts post = new Posts()
                     {
                         postId = (int)sdr["PostId"],
+                        userId = userId,
                         postText = (string)sdr["PostText"],
                         price = (decimal)sdr["Price"],
                         minUserRatings = (byte)sdr["MinUserRatings"],
@@ -91,6 +92,29 @@ namespace PlugzApi.Models
             }
             await CommonService.Instance.Close(con, sdr);
             return posts;
+        }
+        public async Task UpdPost()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdPost", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@postId", SqlDbType.Int).Value = postId;
+                cmd.Parameters.Add("@postText", SqlDbType.NVarChar).Value = postText;
+                cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
+                cmd.Parameters.Add("@minUserRatings", SqlDbType.TinyInt).Value = minUserRatings;
+                cmd.Parameters.Add("@minSales", SqlDbType.SmallInt).Value = minSales;
+                cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
+                cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
         }
     }
 }
