@@ -220,6 +220,10 @@ namespace PlugzApi.Models
         {
             try
             {
+                if (con == null)
+                {
+                    con = await CommonService.Instance.Open();
+                }
                 string salt = BCrypt.Net.BCrypt.GenerateSalt(12);
                 var hashedPassword = HashPassword(salt);
                 cmd = new SqlCommand("UpdUsersPassword", con);
