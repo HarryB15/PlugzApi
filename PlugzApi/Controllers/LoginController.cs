@@ -55,7 +55,15 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> ResetPassword(Login login)
         {
             await login.UpdUsersPassword();
-            return (login.error == null) ? Ok() : StatusCode(login.error.errorCode, login.error);
+            if(login.error == null)
+            {
+                await login.UpdUserMustResetPass();
+                return (login.error == null) ? Ok() : StatusCode(login.error.errorCode, login.error);
+            }
+            else
+            {
+                return StatusCode(login.error.errorCode, login.error);
+            }
         }
     }
 }

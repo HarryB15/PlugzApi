@@ -39,8 +39,9 @@ namespace PlugzApi.Models
                     if (sdr.Read())
                     {
                         userName = (string)sdr["UserName"];
-                        email = (string)sdr["email"];
-                        verified = (bool)sdr["verified"];
+                        email = (string)sdr["Email"];
+                        verified = (bool)sdr["Verified"];
+                        mustResetPass = (bool)sdr["MustResetPass"];
                     }
                     else
                     {

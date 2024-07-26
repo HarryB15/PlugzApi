@@ -10,6 +10,7 @@ namespace PlugzApi.Models
     {
         public string emailUsername { get; set; } = "";
         public string password { get; set; } = "";
+        public bool mustResetPass { get; set; }
         public async Task<bool> ValidateUser()
         {
             var valid = false;
@@ -218,11 +219,13 @@ namespace PlugzApi.Models
         }
         public async Task UpdUsersPassword()
         {
+            var closeCon = false;
             try
             {
                 if (con == null)
                 {
                     con = await CommonService.Instance.Open();
+                    closeCon = true;
                 }
                 string salt = BCrypt.Net.BCrypt.GenerateSalt(12);
                 var hashedPassword = HashPassword(salt);
@@ -238,6 +241,27 @@ namespace PlugzApi.Models
                 CommonService.Instance.Log(ex);
                 error = CommonService.Instance.GetUnexpectedErrrorMsg();
             }
+            if (closeCon)
+            {
+                await CommonService.Instance.Close(con, sdr);
+            }
+        }
+        public async Task UpdUserMustResetPass()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdUserMustResetPass", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
         }
     }
 }
