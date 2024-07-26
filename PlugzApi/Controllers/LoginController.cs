@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
 using PlugzApi.Interfaces;
 using PlugzApi.Models;
+using PlugzApi.Services;
 
 namespace PlugzApi.Controllers
 {
@@ -34,10 +37,10 @@ namespace PlugzApi.Controllers
                 return StatusCode(500, "Unexpected error please try again later");
             }
         }
-        [HttpPatch]
-        public async Task<ActionResult> ResetPassword(Login login)
+        [HttpPatch("Forgot")]
+        public async Task<ActionResult> ForgotPassword(Login login)
         {
-            var user = await login.ResetPassword();
+            var user = await login.ForgotPassword();
             if(login.error == null)
             {
                 var emailError = _emailService.SendResetPasswordEmail(login.password, user.userName, user.email);
@@ -47,6 +50,12 @@ namespace PlugzApi.Controllers
             {
                 return StatusCode(login.error.errorCode, login.error);
             }
+        }
+        [HttpPatch("Reset")]
+        public async Task<ActionResult> ResetPassword(Login login)
+        {
+            await login.UpdUsersPassword();
+            return (login.error == null) ? Ok() : StatusCode(login.error.errorCode, login.error);
         }
     }
 }

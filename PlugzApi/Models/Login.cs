@@ -140,7 +140,7 @@ namespace PlugzApi.Models
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, salt);
             return hashedPassword.Replace(salt, "");
         }
-        public async Task<Users> ResetPassword()
+        public async Task<Users> ForgotPassword()
         {
             Users user = new Users();
             try
@@ -216,7 +216,7 @@ namespace PlugzApi.Models
             }
             password = result.ToString();
         }
-        private async Task UpdUsersPassword()
+        public async Task UpdUsersPassword()
         {
             try
             {
