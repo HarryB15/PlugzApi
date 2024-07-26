@@ -76,6 +76,8 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
                     cmd.Parameters.Add("@salt", SqlDbType.VarChar).Value = salt;
                     cmd.Parameters.Add("@hashedPassword", SqlDbType.VarChar).Value = hashedPassword;
+                    cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
+                    cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
                     sdr = await cmd.ExecuteReaderAsync();
                     if (sdr.Read())
                     {

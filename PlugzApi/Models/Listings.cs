@@ -17,8 +17,6 @@ namespace PlugzApi.Models
         public decimal price { get; set; }
         public byte minUserRatings { get; set; }
         public short? minPurchases { get; set; }
-        public decimal lat { get; set; }
-        public decimal lng { get; set; }
         public bool isPublic { get; set; }
         public DateTime createdDatetime { get; set; }
         public DateTime expiryDatetime { get; set; }
@@ -39,8 +37,6 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                 cmd.Parameters.Add("@minUserRatings", SqlDbType.TinyInt).Value = minUserRatings;
                 cmd.Parameters.Add("@minPurchases", SqlDbType.SmallInt).Value = minPurchases;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
                 sdr = await cmd.ExecuteReaderAsync();
