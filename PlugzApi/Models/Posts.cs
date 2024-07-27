@@ -17,7 +17,6 @@ namespace PlugzApi.Models
         public DateTime expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
-        public byte connectionStatus { get; set; }
 
         public async Task InsPosts()
         {

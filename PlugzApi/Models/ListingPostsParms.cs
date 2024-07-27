@@ -43,8 +43,7 @@ namespace PlugzApi.Models
                         lng = (decimal)sdr["Lng"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
-                        userName = (string)sdr["UserName"],
-                        connectionStatus = (byte)sdr["ConnectionStatus"]
+                        userName = (string)sdr["UserName"]
                     };
                     listings.Add(listing);
                 }
@@ -88,8 +87,7 @@ namespace PlugzApi.Models
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
                         userName = (string)sdr["UserName"],
                         lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"],
-                        connectionStatus = (byte)sdr["ConnectionStatus"]
+                        lng = (decimal)sdr["Lng"]
                     };
                     posts.Add(post);
                 }
