@@ -44,7 +44,7 @@ namespace PlugzApi.Models
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
                         userName = (string)sdr["UserName"],
-                        isConnected = (bool)sdr["IsConnected"]
+                        connectionStatus = (byte)sdr["ConnectionStatus"]
                     };
                     listings.Add(listing);
                 }
@@ -89,7 +89,7 @@ namespace PlugzApi.Models
                         userName = (string)sdr["UserName"],
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"],
-                        isConnected = (bool)sdr["IsConnected"]
+                        connectionStatus = (byte)sdr["ConnectionStatus"]
                     };
                     posts.Add(post);
                 }

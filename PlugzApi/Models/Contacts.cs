@@ -10,7 +10,7 @@ namespace PlugzApi.Models
 	{
         public int contactId { get; set; }
         public DateTime? lastMessageDate { get; set; }
-        public bool isConnected { get; set; }
+        public byte connectionStatus { get; set; }
         public Users contactUser { get; set; } = new Users();
         public Messages? mostRecentMsg { get; set; }
         public async Task<List<Contacts>> GetUsersContacts()
@@ -29,7 +29,7 @@ namespace PlugzApi.Models
                     {
                         contactId = (int)sdr["ContactId"],
                         lastMessageDate = (sdr["LastMessageDate"] != DBNull.Value) ? (DateTime)sdr["LastMessageDate"] : null,
-                        isConnected = (bool)sdr["IsConnected"],
+                        connectionStatus = (byte)sdr["ConnectionStatus"],
                         contactUser = new Users()
                         {
                             userId = (int)sdr["ContactUserId"],
@@ -71,7 +71,7 @@ namespace PlugzApi.Models
                 if (sdr.Read())
                 {
                     contactId = (int)sdr["ContactId"];
-                    isConnected = (bool)sdr["IsConnected"];
+                    connectionStatus = (byte)sdr["ConnectionStatus"];
                     contactUser.userName = (string)sdr["UserName"];
                 }
             }
