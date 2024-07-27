@@ -12,7 +12,7 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> InsConnectionRequests(ConnectionRequests request)
         {
             await request.InsConnectionRequests();
-            return (request.error == null) ? Ok() : StatusCode(request.error.errorCode, request.error);
+            return (request.error == null) ? Ok(request.requestId) : StatusCode(request.error.errorCode, request.error);
         }
         [HttpPut]
         public async Task<ActionResult> ConnectionRequestResponse(ConnectionRequests request)

@@ -24,7 +24,11 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@connectionUserId", SqlDbType.Int).Value = connectionUserId;
-                await cmd.ExecuteNonQueryAsync();
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    requestId = (int)sdr["RequestId"];
+                }
             }
             catch (Exception ex)
             {
