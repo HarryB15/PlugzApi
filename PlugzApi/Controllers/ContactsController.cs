@@ -26,6 +26,12 @@ namespace PlugzApi.Controllers
             await contact.GetContact();
             return (contact.error == null) ? Ok(contact) : StatusCode(contact.error.errorCode, contact.error);
         }
+        [HttpPatch]
+        public async Task<ActionResult> UpdUserContactIsConnected(Contacts contact)
+        {
+            await contact.UpdUserContactIsConnected();
+            return (contact.error == null) ? Ok() : StatusCode(contact.error.errorCode, contact.error);
+        }
     }
 }
 

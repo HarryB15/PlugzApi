@@ -82,5 +82,22 @@ namespace PlugzApi.Models
             await CommonService.Instance.Close(con, sdr);
             return requests;
         }
+        public async Task DeleteConnectionRequest()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("DeleteConnectionRequest", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@requestId", SqlDbType.Int).Value = requestId;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
+        }
     }
 }

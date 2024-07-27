@@ -9,7 +9,9 @@ namespace PlugzApi.Models
 	public class ConnectionStatus: Base
 	{
 		public int contactUserId { get; set; }
-		public byte connectionStatus { get; set; }
+        public int contactId { get; set; }
+        public int requestId { get; set; }
+		public int connectionStatus { get; set; }
 		public async Task GetConnectionStatus()
 		{
             con = await CommonService.Instance.Open();
@@ -20,7 +22,9 @@ namespace PlugzApi.Models
             sdr = await cmd.ExecuteReaderAsync();
             if (sdr.Read())
             {
-                connectionStatus = (byte)sdr["ConnectionStatus"];
+                contactId = (int)sdr["ContactId"];
+                requestId = (int)sdr["RequestId"];
+                connectionStatus = (int)sdr["ConnectionStatus"];
             }
         }
 	}

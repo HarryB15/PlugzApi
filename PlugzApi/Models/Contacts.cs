@@ -11,6 +11,7 @@ namespace PlugzApi.Models
         public int contactId { get; set; }
         public DateTime? lastMessageDate { get; set; }
         public byte connectionStatus { get; set; }
+        public bool isConnected { get; set; }
         public Users contactUser { get; set; } = new Users();
         public Messages? mostRecentMsg { get; set; }
         public async Task<List<Contacts>> GetUsersContacts()
@@ -73,6 +74,24 @@ namespace PlugzApi.Models
                     connectionStatus = (byte)sdr["ConnectionStatus"];
                     contactUser.userName = (string)sdr["UserName"];
                 }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
+        }
+        public async Task UpdUserContactIsConnected()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdUserContactIsConnected", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@contactId", SqlDbType.Int).Value = contactId;
+                cmd.Parameters.Add("@isConnected", SqlDbType.Bit).Value = isConnected;
+                await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {

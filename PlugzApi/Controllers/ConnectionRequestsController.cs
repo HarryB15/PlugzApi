@@ -28,6 +28,12 @@ namespace PlugzApi.Controllers
             var requests = await request.GetUserConnectionRequests();
             return (request.error == null) ? Ok(requests) : StatusCode(request.error.errorCode, request.error);
         }
+        [HttpDelete]
+        public async Task<ActionResult> DeleteConnectionRequest(ConnectionRequests request)
+        {
+            await request.DeleteConnectionRequest();
+            return (request.error == null) ? Ok() : StatusCode(request.error.errorCode, request.error);
+        }
     }
 }
 
