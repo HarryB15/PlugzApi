@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
 using PlugzApi.Services;
 
@@ -162,6 +163,25 @@ namespace PlugzApi.Models
                 error = CommonService.Instance.GetUnexpectedErrrorMsg();
                 return false;
             }
+        }
+        public async Task UpdateUserLocation()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdateUserLocation", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Instance.Close(con, sdr);
         }
     }
 }

@@ -45,6 +45,12 @@ namespace PlugzApi.Controllers
                 return StatusCode(user.error.errorCode, user.error);
             }
         }
+        [HttpPatch]
+        public async Task<ActionResult> UpdateUserLocation(Users user)
+        {
+            await user.UpdateUserLocation();
+            return (user.error == null) ? Ok() : StatusCode(user.error.errorCode, user.error);
+        }
     }
 }
 
