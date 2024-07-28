@@ -43,6 +43,8 @@ namespace PlugzApi.Models
                         email = (string)sdr["Email"];
                         verified = (bool)sdr["Verified"];
                         mustResetPass = (bool)sdr["MustResetPass"];
+                        lat = (decimal)sdr["Lat"];
+                        lng = (decimal)sdr["Lng"];
                     }
                     else
                     {
