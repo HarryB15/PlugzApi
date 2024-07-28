@@ -10,10 +10,11 @@ namespace PlugzApi.Models
 	{
         public int contactId { get; set; }
         public DateTime? lastMessageDate { get; set; }
-        public byte connectionStatus { get; set; }
+        public int connectionStatus { get; set; }
         public bool isConnected { get; set; }
         public Users contactUser { get; set; } = new Users();
         public Messages? mostRecentMsg { get; set; }
+        public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
         public async Task<List<Contacts>> GetUsersContacts()
         {
             List<Contacts> contacts = new List<Contacts>();
@@ -50,6 +51,11 @@ namespace PlugzApi.Models
                     }
                     contacts.Add(contact);
                 }
+                foreach(var contact in contacts)
+                {
+                    contact.profilePhoto.userId = contact.contactUser.userId;
+                    await contact.profilePhoto.GetProfilePhoto();
+                }
             }
             catch (Exception ex)
             {
@@ -72,7 +78,7 @@ namespace PlugzApi.Models
                 if (sdr.Read())
                 {
                     contactId = (int)sdr["ContactId"];
-                    connectionStatus = (byte)sdr["ConnectionStatus"];
+                    connectionStatus = (int)sdr["ConnectionStatus"];
                     contactUser.userName = (string)sdr["UserName"];
                 }
             }
