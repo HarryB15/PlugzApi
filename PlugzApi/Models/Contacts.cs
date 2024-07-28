@@ -23,6 +23,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetUsersContacts", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@isConnected", SqlDbType.Bit).Value = isConnected;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
