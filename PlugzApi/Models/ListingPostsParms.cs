@@ -13,6 +13,7 @@ namespace PlugzApi.Models
         public decimal minPrice { get; set; }
         public bool connectionsOnly { get; set; }
         public int maxDist { get; set; }
+        public string pickUpDropOff { get; set; } = "";
         public List<Listings> listings { get; set; } = new List<Listings>();
         public List<Posts> posts { get; set; } = new List<Posts>();
 
@@ -30,6 +31,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@minPrice", SqlDbType.Decimal).Value = minPrice;
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
                 cmd.Parameters.Add("@maxDist", SqlDbType.Int).Value = maxDist;
+                cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
