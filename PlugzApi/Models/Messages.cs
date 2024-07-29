@@ -37,7 +37,7 @@ namespace PlugzApi.Models
             }
             await CommonService.Instance.Close(con, sdr);
         }
-        public async Task<List<Messages>> GetMessages(int userId, int contactUserId)
+        public async Task<List<Messages>> GetMessages(int contactUserId)
         {
             List<Messages> messages = new List<Messages>();
             try
@@ -47,6 +47,7 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@contactUserId", SqlDbType.Int).Value = contactUserId;
+                cmd.Parameters.Add("@existingMessageIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {

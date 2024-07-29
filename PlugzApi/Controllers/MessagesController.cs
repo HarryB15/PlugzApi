@@ -15,11 +15,10 @@ namespace PlugzApi.Controllers
             await message.InsMessage();
             return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpGet("{userId:int}/{contactUserId:int}")]
-        public async Task<ActionResult<List<Messages>>> GetMessages(int userId, int contactUserId)
+        [HttpPost("{contactUserId:int}")]
+        public async Task<ActionResult> GetMessages(Messages message, int contactUserId)
         {
-            Messages message = new Messages();
-            var messages = await message.GetMessages(userId, contactUserId);
+            var messages = await message.GetMessages(contactUserId);
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
     }

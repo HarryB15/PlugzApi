@@ -135,6 +135,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetUsersListing", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
@@ -207,6 +208,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
                 cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
