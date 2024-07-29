@@ -7,6 +7,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using System.IO;
 using System.Text;
+using Microsoft.Graph.Models;
 
 namespace PlugzApi.Models
 {
@@ -22,7 +23,9 @@ namespace PlugzApi.Models
         public DateTime expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
+        public string pickUpDropOff { get; set; } = "";
         public List<string> images { get; set; } = new List<string>();
+        public List<Keywords> keywords { get; set; } = new List<Keywords>();
 
         public async Task InsListings()
         {
@@ -38,11 +41,17 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@minPurchases", SqlDbType.SmallInt).Value = minPurchases;
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
+                cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
                 {
                     listingId = (int)sdr["listingId"];
                     await StoreImages();
+                    if(keywords.Count > 0)
+                    {
+                        await sdr.CloseAsync();
+                        await InsKeywords();
+                    }
                 }
                 else
                 {
@@ -55,6 +64,28 @@ namespace PlugzApi.Models
                 error = CommonService.Instance.GetUnexpectedErrrorMsg();
             }
             await CommonService.Instance.Close(con, sdr);
+        }
+        private async Task InsKeywords()
+        {
+            try
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("String", typeof(string));
+                foreach (var keyword in keywords)
+                {
+                    dt.Rows.Add(keyword.keyword);
+                }
+
+                cmd = new SqlCommand("InsKeywords", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                cmd.Parameters.Add("@keywords", SqlDbType.Structured).Value = dt;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Instance.Log(ex);
+            }
         }
         private async Task StoreImages()
         {
