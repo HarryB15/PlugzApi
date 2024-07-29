@@ -14,6 +14,7 @@ namespace PlugzApi.Models
         public DateTime requestDatetime { get; set; }
         public bool accepted { get; set; }
         public string userName { get; set; } = "";
+        public int connectionStatus { get; set; }
 
         public async Task InsConnectionRequests()
         {
@@ -28,6 +29,7 @@ namespace PlugzApi.Models
                 if (sdr.Read())
                 {
                     requestId = (int)sdr["RequestId"];
+                    connectionStatus = (int)sdr["ConnectionStatus"];
                 }
             }
             catch (Exception ex)
