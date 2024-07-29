@@ -9,12 +9,9 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        [HttpGet("{userId:int}/{isConnected:bool}")]
-        public async Task<ActionResult<List<Contacts>>> GetUsersContacts(int userId, bool isConnected)
+        [HttpPost]
+        public async Task<ActionResult> GetUsersContacts(Contacts contact)
         {
-            Contacts contact = new Contacts();
-            contact.userId = userId;
-            contact.isConnected = isConnected;
             var contacts = await contact.GetUsersContacts();
             return (contact.error == null) ? Ok(contacts) : StatusCode(contact.error.errorCode, contact.error);
         }

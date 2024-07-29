@@ -25,6 +25,7 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@isConnected", SqlDbType.Bit).Value = isConnected;
+                cmd.Parameters.Add("@existingContactIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {

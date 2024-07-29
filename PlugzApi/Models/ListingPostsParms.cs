@@ -32,6 +32,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
                 cmd.Parameters.Add("@maxDist", SqlDbType.Int).Value = maxDist;
                 cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
+                cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
@@ -75,6 +76,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@minPrice", SqlDbType.Decimal).Value = minPrice;
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
                 cmd.Parameters.Add("@maxDist", SqlDbType.Int).Value = maxDist;
+                cmd.Parameters.Add("@existingPostIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {

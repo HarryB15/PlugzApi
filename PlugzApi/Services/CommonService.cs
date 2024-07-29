@@ -130,6 +130,16 @@ namespace PlugzApi.Services
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }
+        public static DataTable AddListInt(List<int> listInts)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("IntValue", typeof(int));
+            foreach (var listInt in listInts)
+            {
+                dt.Rows.Add(listInt);
+            }
+            return dt;
+        }
     }
 }
 
