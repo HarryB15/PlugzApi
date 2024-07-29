@@ -20,11 +20,9 @@ namespace PlugzApi.Controllers
             await post.DeletePost();
             return (post.error == null) ? Ok() : StatusCode(post.error.errorCode, post.error);
         }
-        [HttpGet("{userId:int}")]
-        public async Task<ActionResult> GetUsersPosts(int userId)
+        [HttpPost("UsersPosts")]
+        public async Task<ActionResult> GetUsersPosts(Posts post)
         {
-            Posts post = new Posts();
-            post.userId = userId;
             var posts = await post.GetUsersPosts();
             return (post.error == null) ? Ok(posts) : StatusCode(post.error.errorCode, post.error);
         }

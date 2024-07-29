@@ -20,11 +20,9 @@ namespace PlugzApi.Controllers
             await request.ConnectionRequestResponse();
             return (request.error == null) ? Ok() : StatusCode(request.error.errorCode, request.error);
         }
-        [HttpGet("{userId:int}")]
-        public async Task<ActionResult> GetUserConnectionRequests(int userId)
+        [HttpPost("UsersRequests")]
+        public async Task<ActionResult> GetUserConnectionRequests(ConnectionRequests request)
         {
-            ConnectionRequests request = new ConnectionRequests();
-            request.userId = userId;
             var requests = await request.GetUserConnectionRequests();
             return (request.error == null) ? Ok(requests) : StatusCode(request.error.errorCode, request.error);
         }

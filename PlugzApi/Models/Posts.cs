@@ -66,6 +66,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetUsersPosts", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@existingPostIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
