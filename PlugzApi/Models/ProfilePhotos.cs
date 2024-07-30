@@ -14,7 +14,7 @@ namespace PlugzApi.Models
             try
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
-                var hashedUserId = CommonService.Instance.HashString(userId.ToString(), "ProfilePhotos");
+                var hashedUserId = CommonService.HashString(userId.ToString(), "ProfilePhotos");
                 var images = await azureStorageService.GetPhotos("profile-photos", hashedUserId);
                 if(images != null)
                 {
@@ -22,13 +22,13 @@ namespace PlugzApi.Models
                 }
                 else
                 {
-                    error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    error = CommonService.GetUnexpectedErrrorMsg();
                 }
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
         public async Task UpdateProfilePhoto()
@@ -36,17 +36,17 @@ namespace PlugzApi.Models
             try
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
-                var hashedUserId = CommonService.Instance.HashString(userId.ToString(), "ProfilePhotos");
+                var hashedUserId = CommonService.HashString(userId.ToString(), "ProfilePhotos");
                 var success = await azureStorageService.StoreImage(image, "profile-photos", $"{hashedUserId}.txt");
                 if (!success)
                 {
-                    error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    error = CommonService.GetUnexpectedErrrorMsg();
                 }
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
     }

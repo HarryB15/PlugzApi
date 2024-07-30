@@ -47,7 +47,7 @@ namespace PlugzApi.Services
             await con.OpenAsync();
             return con;
         }
-        public async Task Close(SqlConnection? con, SqlDataReader? sdr = null)
+        public static async Task Close(SqlConnection? con, SqlDataReader? sdr = null)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PlugzApi.Services
                 Log(ex);
             }
         }
-        public Error GetUnexpectedErrrorMsg()
+        public static Error GetUnexpectedErrrorMsg()
         {
             return new Error()
             {
@@ -79,7 +79,7 @@ namespace PlugzApi.Services
                 errorCode = StatusCodes.Status500InternalServerError
             };
         }
-        public void Log(Exception ex)
+        public static void Log(Exception ex)
         {
             SentrySdk.CaptureException(ex);
         }
@@ -121,7 +121,7 @@ namespace PlugzApi.Services
         {
             return new BlobServiceClient(new Uri(_configuration["Azure:Storage"]!), new DefaultAzureCredential());
         }
-        public string HashString(string message, string key)
+        public static string HashString(string message, string key)
         {
             using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
             {

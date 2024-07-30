@@ -34,10 +34,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
     }
 }

@@ -59,8 +59,8 @@ namespace PlugzApi.Services
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                return CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                return CommonService.GetUnexpectedErrrorMsg();
             }
         }
         public Error? SendResetPasswordEmail(string password, string userName, string toAddress)
@@ -89,8 +89,8 @@ namespace PlugzApi.Services
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                return CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                return CommonService.GetUnexpectedErrrorMsg();
             }
         }
     }

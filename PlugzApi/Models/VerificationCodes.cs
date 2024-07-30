@@ -26,10 +26,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
         public async Task ValidateVerificationCode()
         {
@@ -43,7 +43,7 @@ namespace PlugzApi.Models
                     jwt = CommonService.Instance.GenerateJwt(userId);
                     if (jwt == null)
                     {
-                        error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                        error = CommonService.GetUnexpectedErrrorMsg();
                     }
                 }
                 else
@@ -68,10 +68,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
         private async Task UpdUserVerified()
         {
@@ -85,10 +85,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
         private async Task GetVerificationCode()
         {
@@ -107,10 +107,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
         private int GenerateVerificationCode()
         {

@@ -56,15 +56,15 @@ namespace PlugzApi.Models
                 }
                 else
                 {
-                    error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    error = CommonService.GetUnexpectedErrrorMsg();
                 }
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
         }
         private async Task InsKeywords()
         {
@@ -85,7 +85,7 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
+                CommonService.Log(ex);
             }
         }
         private async Task StoreImages()
@@ -93,20 +93,20 @@ namespace PlugzApi.Models
             try
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
-                var hashedListingId = CommonService.Instance.HashString(listingId.ToString(), "Listings");
+                var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
                 for (var i = 0; i < images.Count; i++)
                 {
                     if (!await azureStorageService.StoreImage(images[i], "listing-images", $"{hashedListingId}/{i}.txt"))
                     {
-                        error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                        error = CommonService.GetUnexpectedErrrorMsg();
                         break;
                     }
                 }
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
                 await DeleteListing();
             }
         }
@@ -122,8 +122,8 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
         public async Task<List<Listings>> GetUsersListing()
@@ -159,10 +159,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
             return listings;
         }
         public async Task GetImages()
@@ -170,7 +170,7 @@ namespace PlugzApi.Models
             try
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
-                var hashedListingId = CommonService.Instance.HashString(listingId.ToString(), "Listings");
+                var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
                 var azureImages = await azureStorageService.GetPhotos("listing-images", hashedListingId);
                 if (azureImages != null)
                 {
@@ -178,13 +178,13 @@ namespace PlugzApi.Models
                 }
                 else
                 {
-                    error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                    error = CommonService.GetUnexpectedErrrorMsg();
                 }
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
         public async Task<List<Listings>> SearchListings(string searchValue)
@@ -233,10 +233,10 @@ namespace PlugzApi.Models
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
-                error = CommonService.Instance.GetUnexpectedErrrorMsg();
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
             }
-            await CommonService.Instance.Close(con, sdr);
+            await CommonService.Close(con, sdr);
             return listings;
         }
     }

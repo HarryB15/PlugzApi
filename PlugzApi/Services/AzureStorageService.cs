@@ -34,7 +34,7 @@ namespace PlugzApi.Services
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
+                CommonService.Log(ex);
                 return null;
             }
             return images;
@@ -54,7 +54,7 @@ namespace PlugzApi.Services
             }
             catch (Exception ex)
             {
-                CommonService.Instance.Log(ex);
+                CommonService.Log(ex);
                 return false;
             }
             return success;
