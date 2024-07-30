@@ -70,7 +70,7 @@ namespace PlugzApi.Models
                 error = CommonService.Instance.GetUnexpectedErrrorMsg();
             }
             await CommonService.Instance.Close(con, sdr);
-            return messages;
+            return messages.OrderBy(m => m.sentDatetime).ToList();
         }
     }
 }
