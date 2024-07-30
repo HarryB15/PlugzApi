@@ -36,7 +36,7 @@ namespace PlugzApi.Models
                         if (valid)
                         {
                             await DeleteUserFailedSignIns();
-                            jwt = CommonService.Instance.GenerateJwt(userId);
+                            jwt = CommonService.GenerateJwt(userId);
                             if (jwt == null)
                             {
                                 error = CommonService.GetUnexpectedErrrorMsg();

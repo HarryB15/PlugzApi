@@ -24,7 +24,7 @@ namespace PlugzApi.Models
                 {
                     tokenValid = true;
                     tokenExpired = false;
-                    jwt = CommonService.Instance.GenerateJwt(userId);
+                    jwt = CommonService.GenerateJwt(userId);
                     if (jwt == null)
                     {
                         error = CommonService.GetUnexpectedErrrorMsg();
@@ -86,7 +86,7 @@ namespace PlugzApi.Models
                     if (sdr.Read())
                     {
                         userId = (int)sdr["UserId"];
-                        jwt = CommonService.Instance.GenerateJwt(userId);
+                        jwt = CommonService.GenerateJwt(userId);
                         if (jwt == null)
                         {
                             error = CommonService.GetUnexpectedErrrorMsg();

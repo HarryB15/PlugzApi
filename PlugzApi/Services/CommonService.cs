@@ -84,7 +84,7 @@ namespace PlugzApi.Services
             SentrySdk.CaptureException(ex);
         }
 
-        public string? GenerateJwt(int userId)
+        public static string? GenerateJwt(int userId)
         {
             try
             {

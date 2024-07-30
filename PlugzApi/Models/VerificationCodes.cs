@@ -40,7 +40,7 @@ namespace PlugzApi.Models
                 {
                     await DelVerificationCode();
                     await UpdUserVerified();
-                    jwt = CommonService.Instance.GenerateJwt(userId);
+                    jwt = CommonService.GenerateJwt(userId);
                     if (jwt == null)
                     {
                         error = CommonService.GetUnexpectedErrrorMsg();
