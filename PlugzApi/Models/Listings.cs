@@ -142,6 +142,7 @@ namespace PlugzApi.Models
                     Listings listing = new Listings()
                     {
                         listingId = (int)sdr["ListingId"],
+                        userId = userId,
                         listingDesc = (string)sdr["ListingDesc"],
                         price = (decimal)sdr["Price"],
                         minUserRatings = (byte)sdr["MinUserRatings"],
