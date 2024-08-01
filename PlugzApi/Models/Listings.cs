@@ -72,7 +72,7 @@ namespace PlugzApi.Models
             {
                 var dt = new DataTable();
                 dt.Columns.Add("String", typeof(string));
-                foreach (var keyword in keywords)
+                foreach (var keyword in keywords.Where(k => k.keywordId == 0 && !k.isDeleted))
                 {
                     dt.Rows.Add(keyword.keyword);
                 }
@@ -260,7 +260,7 @@ namespace PlugzApi.Models
                 if (keywords.Count > 0)
                 {
                     await DeleteKeywords();
-                    await UpdInsKeywords();
+                    await InsKeywords();
                 }
             }
             catch (Exception ex)
@@ -282,34 +282,6 @@ namespace PlugzApi.Models
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
                     cmd.Parameters.Add("@keywordIds", SqlDbType.Structured).Value = CommonService.AddListInt(deletedKeywordIds);
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                CommonService.Log(ex);
-                error = CommonService.GetUnexpectedErrrorMsg();
-            }
-        }
-        private async Task UpdInsKeywords()
-        {
-            try
-            {
-                var modifiedKeywords = keywords.Where(k => !k.isDeleted).ToList();
-                if (modifiedKeywords != null)
-                {
-                    var dt = new DataTable();
-                    dt.Columns.Add("KeywordId", typeof(int));
-                    dt.Columns.Add("Keyword", typeof(string));
-                    foreach (var keyword in modifiedKeywords)
-                    {
-                        dt.Rows.Add(keyword.keywordId, keyword.keyword);
-                    }
-
-                    cmd = new SqlCommand("UpdInsKeywords", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
-                    cmd.Parameters.Add("@keywords", SqlDbType.Structured).Value = dt;
                     await cmd.ExecuteNonQueryAsync();
                 }
             }

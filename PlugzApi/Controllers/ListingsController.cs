@@ -12,7 +12,7 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> InsListings(Listings listing)
         {
             await listing.InsListings();
-            return (listing.error == null) ? Ok() : StatusCode(listing.error.errorCode, listing.error);
+            return (listing.error == null) ? Ok(listing.listingId) : StatusCode(listing.error.errorCode, listing.error);
         }
         [HttpPost("UsersListings")]
         public async Task<ActionResult> GetUsersListing(Listings listing)
