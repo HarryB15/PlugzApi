@@ -6,7 +6,7 @@ namespace PlugzApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KeywordsContoller : ControllerBase
+    public class KeywordsController : ControllerBase
     {
         [HttpGet("{listingId:int}")]
         public async Task<ActionResult> GetKeywords(int listingId)
