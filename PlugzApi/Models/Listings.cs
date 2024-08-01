@@ -150,6 +150,7 @@ namespace PlugzApi.Models
                         isPublic = (bool)sdr["IsPublic"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        pickUpDropOff = (string)sdr["PickUpDropOff"]
                     };
                     listings.Add(listing);
                 }
@@ -239,6 +240,84 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
             return listings;
+        }
+        public async Task UpdListing()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdListing", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                cmd.Parameters.Add("@listingDesc", SqlDbType.NVarChar).Value = listingDesc;
+                cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
+                cmd.Parameters.Add("@minUserRatings", SqlDbType.TinyInt).Value = minUserRatings;
+                cmd.Parameters.Add("@minPurchases", SqlDbType.SmallInt).Value = minPurchases;
+                cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
+                cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
+                cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
+                await cmd.ExecuteNonQueryAsync();
+                if (keywords.Count > 0)
+                {
+                    await DeleteKeywords();
+                    await UpdInsKeywords();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
+        private async Task DeleteKeywords()
+        {
+            try
+            {
+                var deletedKeywords = keywords.Where(k => k.isDeleted && k.keywordId > 0).ToList();
+                if(deletedKeywords != null)
+                {
+                    var deletedKeywordIds = deletedKeywords.Select(k => k.keywordId).ToList();
+                    cmd = new SqlCommand("DeleteKeywords", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                    cmd.Parameters.Add("@keywordIds", SqlDbType.Structured).Value = CommonService.AddListInt(deletedKeywordIds);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+        }
+        private async Task UpdInsKeywords()
+        {
+            try
+            {
+                var modifiedKeywords = keywords.Where(k => !k.isDeleted).ToList();
+                if (modifiedKeywords != null)
+                {
+                    var dt = new DataTable();
+                    dt.Columns.Add("KeywordId", typeof(int));
+                    dt.Columns.Add("Keyword", typeof(string));
+                    foreach (var keyword in modifiedKeywords)
+                    {
+                        dt.Rows.Add(keyword.keywordId, keyword.keyword);
+                    }
+
+                    cmd = new SqlCommand("UpdInsKeywords", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                    cmd.Parameters.Add("@keywords", SqlDbType.Structured).Value = dt;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
         }
     }
 }

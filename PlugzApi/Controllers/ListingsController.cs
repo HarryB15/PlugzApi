@@ -26,6 +26,12 @@ namespace PlugzApi.Controllers
             var listings = await listing.SearchListings(searchValue);
             return (listing.error == null) ? Ok(listings) : StatusCode(listing.error.errorCode, listing.error);
         }
+        [HttpPut]
+        public async Task<ActionResult> UpdListing(Listings listing)
+        {
+            await listing.UpdListing();
+            return (listing.error == null) ? Ok() : StatusCode(listing.error.errorCode, listing.error);
+        }
     }
 }
 
