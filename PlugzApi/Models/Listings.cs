@@ -2,12 +2,6 @@
 using PlugzApi.Services;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Graph.Models.Security;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using System.IO;
-using System.Text;
-using Microsoft.Graph.Models;
 using System.Text.RegularExpressions;
 
 namespace PlugzApi.Models
@@ -119,6 +113,10 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
                 await cmd.ExecuteNonQueryAsync();
+
+                AzureStorageService storageService = new AzureStorageService();
+                var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
+                await storageService.DeleteImages("listing-images", hashedListingId);
             }
             catch (Exception ex)
             {

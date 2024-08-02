@@ -59,6 +59,23 @@ namespace PlugzApi.Services
             }
             return success;
         }
+        public async Task DeleteImages(string blobContainer, string prefix)
+        {
+            try
+            {
+                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
+                var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
+                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
+                foreach (var blob in blobs)
+                {
+                    await containerClient.DeleteBlobAsync(blob.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+            }
+        }
     }
 }
 

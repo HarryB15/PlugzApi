@@ -32,6 +32,14 @@ namespace PlugzApi.Controllers
             await listing.UpdListing();
             return (listing.error == null) ? Ok() : StatusCode(listing.error.errorCode, listing.error);
         }
+        [HttpDelete("{listingId:int}")]
+        public async Task<ActionResult> DeleteListing(int listingId)
+        {
+            Listings listing = new Listings();
+            listing.listingId = listingId;
+            await listing.DeleteListing();
+            return (listing.error == null) ? Ok() : StatusCode(listing.error.errorCode, listing.error);
+        }
     }
 }
 
