@@ -87,7 +87,7 @@ namespace PlugzApi.Models
                         price = (decimal)sdr["Price"],
                         isPublic = (bool)sdr["IsPublic"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"],
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"]

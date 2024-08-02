@@ -14,7 +14,7 @@ namespace PlugzApi.Models
         public short? minSales { get; set; }
         public bool isPublic { get; set; }
         public DateTime createdDatetime { get; set; }
-        public DateTime expiryDatetime { get; set; }
+        public DateTime? expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
 
@@ -80,7 +80,7 @@ namespace PlugzApi.Models
                         minSales = (short)sdr["MinSales"],
                         isPublic = (bool)sdr["IsPublic"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                     };
                     posts.Add(post);
                 }
