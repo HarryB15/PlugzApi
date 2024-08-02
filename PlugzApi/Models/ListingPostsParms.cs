@@ -45,7 +45,7 @@ namespace PlugzApi.Models
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"]
                     };
                     listings.Add(listing);

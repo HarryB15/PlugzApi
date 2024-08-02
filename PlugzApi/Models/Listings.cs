@@ -15,7 +15,7 @@ namespace PlugzApi.Models
         public short? minPurchases { get; set; }
         public bool isPublic { get; set; }
         public DateTime createdDatetime { get; set; }
-        public DateTime expiryDatetime { get; set; }
+        public DateTime? expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
         public string pickUpDropOff { get; set; } = "";
@@ -147,7 +147,7 @@ namespace PlugzApi.Models
                         minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null,
                         isPublic = (bool)sdr["IsPublic"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         pickUpDropOff = (string)sdr["PickUpDropOff"]
                     };
                     listings.Add(listing);
@@ -221,7 +221,7 @@ namespace PlugzApi.Models
                         lat = (decimal)sdr["Lat"],
                         lng = (decimal)sdr["Lng"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (DateTime)sdr["ExpiryDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"]
                     };
                     listings.Add(listing);
