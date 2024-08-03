@@ -14,10 +14,10 @@ namespace PlugzApi.Controllers
             await listing.InsListings();
             return (listing.error == null) ? Ok(listing.listingId) : StatusCode(listing.error.errorCode, listing.error);
         }
-        [HttpPost("UsersListings")]
-        public async Task<ActionResult> GetUsersListing(Listings listing)
+        [HttpPost("UsersListings/{incExpired:bool}")]
+        public async Task<ActionResult> GetUsersListing(Listings listing, bool incExpired)
         {
-            var listings = await listing.GetUsersListing();
+            var listings = await listing.GetUsersListing(incExpired);
             return (listing.error == null) ? Ok(listings) : StatusCode(listing.error.errorCode, listing.error);
         }
         [HttpPost("{searchValue}")]

@@ -20,10 +20,10 @@ namespace PlugzApi.Controllers
             await post.DeletePost();
             return (post.error == null) ? Ok() : StatusCode(post.error.errorCode, post.error);
         }
-        [HttpPost("UsersPosts")]
-        public async Task<ActionResult> GetUsersPosts(Posts post)
+        [HttpPost("UsersPosts/{incExpired:bool}")]
+        public async Task<ActionResult> GetUsersPosts(Posts post, bool incExpired)
         {
-            var posts = await post.GetUsersPosts();
+            var posts = await post.GetUsersPosts(incExpired);
             return (post.error == null) ? Ok(posts) : StatusCode(post.error.errorCode, post.error);
         }
         [HttpPut]

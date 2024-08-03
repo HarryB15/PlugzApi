@@ -124,7 +124,7 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
-        public async Task<List<Listings>> GetUsersListing()
+        public async Task<List<Listings>> GetUsersListing(bool incExpired)
         {
             List<Listings> listings = new List<Listings>();
             try
@@ -133,6 +133,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetUsersListing", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@incExpired", SqlDbType.Bit).Value = incExpired;
                 cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
