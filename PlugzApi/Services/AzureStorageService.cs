@@ -2,6 +2,7 @@
 using System.Text;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using PlugzApi.Models;
 
 namespace PlugzApi.Services
 {
@@ -69,6 +70,35 @@ namespace PlugzApi.Services
                 foreach (var blob in blobs)
                 {
                     await containerClient.DeleteBlobAsync(blob.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+            }
+        }
+        public async Task UpdateListingImages(List<Images> images, string prefix)
+        {
+            try
+            {
+                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
+                var containerClient = blobServiceClient.GetBlobContainerClient("listing-images");
+                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
+                foreach (var blob in blobs)
+                {
+                    var imageIndex = int.Parse(blob.Name.Substring(blob.Name.LastIndexOf('/') + 1).Split('.')[0]);
+                    if(imageIndex > images.Count)
+                    {
+                        await containerClient.DeleteBlobAsync(blob.Name);
+                    }
+                }
+
+                for(var i = 0; i < images.Count; i++)
+                {
+                    if (images[i].id != i)
+                    {
+                        await StoreImage(images[i].dataUrl, "listing-images", $"{prefix}/{i}.txt");
+                    }
                 }
             }
             catch (Exception ex)

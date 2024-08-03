@@ -19,7 +19,7 @@ namespace PlugzApi.Models
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
         public string pickUpDropOff { get; set; } = "";
-        public List<string> images { get; set; } = new List<string>();
+        public List<Images> images { get; set; } = new List<Images>();
         public List<Keywords> keywords { get; set; } = new List<Keywords>();
 
         public async Task InsListings()
@@ -90,7 +90,7 @@ namespace PlugzApi.Models
                 var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
                 for (var i = 0; i < images.Count; i++)
                 {
-                    if (!await azureStorageService.StoreImage(images[i], "listing-images", $"{hashedListingId}/{i}.txt"))
+                    if (!await azureStorageService.StoreImage(images[i].dataUrl, "listing-images", $"{hashedListingId}/{i}.txt"))
                     {
                         error = CommonService.GetUnexpectedErrrorMsg();
                         break;
@@ -175,7 +175,14 @@ namespace PlugzApi.Models
                 var azureImages = await azureStorageService.GetPhotos("listing-images", hashedListingId);
                 if (azureImages != null)
                 {
-                    images = azureImages; 
+                    for(var i = 0; i < azureImages.Count; i++)
+                    {
+                        images.Add(new Images()
+                        {
+                            dataUrl = azureImages[i],
+                            id = i
+                        });
+                    }
                 }
                 else
                 {
@@ -261,6 +268,10 @@ namespace PlugzApi.Models
                     await DeleteKeywords();
                     await InsKeywords();
                 }
+
+                AzureStorageService azureStorageService = new AzureStorageService();
+                var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
+                await azureStorageService.UpdateListingImages(images, hashedListingId);
             }
             catch (Exception ex)
             {
