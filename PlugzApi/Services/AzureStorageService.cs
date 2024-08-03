@@ -87,7 +87,7 @@ namespace PlugzApi.Services
                 foreach (var blob in blobs)
                 {
                     var imageIndex = int.Parse(blob.Name.Substring(blob.Name.LastIndexOf('/') + 1).Split('.')[0]);
-                    if(imageIndex > images.Count)
+                    if(imageIndex + 1 > images.Count)
                     {
                         await containerClient.DeleteBlobAsync(blob.Name);
                     }
