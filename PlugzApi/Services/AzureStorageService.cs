@@ -21,15 +21,18 @@ namespace PlugzApi.Services
                 foreach (var blob in blobs)
                 {
                     blobClient = containerClient.GetBlobClient(blob.Name);
-                    response = await blobClient.DownloadAsync();
-                    var image = "";
-                    using (var streamReader = new StreamReader(response.Value.Content))
+                    if (blobClient.Exists())
                     {
-                        while (!streamReader.EndOfStream)
+                        response = await blobClient.DownloadAsync();
+                        var image = "";
+                        using (var streamReader = new StreamReader(response.Value.Content))
                         {
-                            image += await streamReader.ReadLineAsync();
+                            while (!streamReader.EndOfStream)
+                            {
+                                image += await streamReader.ReadLineAsync();
+                            }
+                            images.Add(image);
                         }
-                        images.Add(image);
                     }
                 }
             }
@@ -69,7 +72,7 @@ namespace PlugzApi.Services
                 var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
                 foreach (var blob in blobs)
                 {
-                    await containerClient.DeleteBlobAsync(blob.Name);
+                    await containerClient.DeleteBlobIfExistsAsync(blob.Name);
                 }
             }
             catch (Exception ex)
@@ -89,7 +92,7 @@ namespace PlugzApi.Services
                     var imageIndex = int.Parse(blob.Name.Substring(blob.Name.LastIndexOf('/') + 1).Split('.')[0]);
                     if(imageIndex + 1 > images.Count)
                     {
-                        await containerClient.DeleteBlobAsync(blob.Name);
+                        await containerClient.DeleteBlobIfExistsAsync(blob.Name);
                     }
                 }
 
