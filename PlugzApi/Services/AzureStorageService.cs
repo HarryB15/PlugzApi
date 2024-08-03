@@ -15,7 +15,7 @@ namespace PlugzApi.Services
             {
                 var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
                 var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
-                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
+                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 BlobClient blobClient;
                 Azure.Response<BlobDownloadInfo> response;
                 foreach (var blob in blobs)
@@ -69,7 +69,7 @@ namespace PlugzApi.Services
             {
                 var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
                 var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
-                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
+                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 foreach (var blob in blobs)
                 {
                     await containerClient.DeleteBlobIfExistsAsync(blob.Name);
@@ -86,7 +86,7 @@ namespace PlugzApi.Services
             {
                 var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
                 var containerClient = blobServiceClient.GetBlobContainerClient("listing-images");
-                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.All, prefix: prefix);
+                var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 foreach (var blob in blobs)
                 {
                     var imageIndex = int.Parse(blob.Name.Substring(blob.Name.LastIndexOf('/') + 1).Split('.')[0]);
