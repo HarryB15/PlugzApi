@@ -103,6 +103,81 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
+        public async Task GetListingsMap()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetListingsMap", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Listings listing = new Listings()
+                    {
+                        listingId = (int)sdr["ListingId"],
+                        userId = (int)sdr["UserId"],
+                        listingDesc = (string)sdr["ListingDesc"],
+                        price = (decimal)sdr["Price"],
+                        lat = (decimal)sdr["Lat"],
+                        lng = (decimal)sdr["Lng"],
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                        userName = (string)sdr["UserName"]
+                    };
+                    listings.Add(listing);
+                }
+                foreach (var listing in listings)
+                {
+                    await listing.GetImages();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
+        public async Task GetPostsMap()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetPostsMap", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Posts post = new Posts()
+                    {
+                        postId = (int)sdr["PostId"],
+                        userId = (int)sdr["UserId"],
+                        postText = (string)sdr["PostText"],
+                        price = (decimal)sdr["Price"],
+                        isPublic = (bool)sdr["IsPublic"],
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                        userName = (string)sdr["UserName"],
+                        lat = (decimal)sdr["Lat"],
+                        lng = (decimal)sdr["Lng"]
+                    };
+                    posts.Add(post);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
     }
 }
 

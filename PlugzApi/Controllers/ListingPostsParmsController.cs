@@ -20,6 +20,18 @@ namespace PlugzApi.Controllers
             await parms.GetPosts();
             return (parms.error == null) ? Ok(parms.posts) : StatusCode(parms.error.errorCode, parms.error);
         }
+        [HttpPost("ListingsMap")]
+        public async Task<ActionResult> GetListingsMap(ListingPostsParms parms)
+        {
+            await parms.GetListingsMap();
+            return (parms.error == null) ? Ok(parms.listings) : StatusCode(parms.error.errorCode, parms.error);
+        }
+        [HttpPost("PostsMap")]
+        public async Task<ActionResult> GetPostsMap(ListingPostsParms parms)
+        {
+            await parms.GetPostsMap();
+            return (parms.error == null) ? Ok(parms.posts) : StatusCode(parms.error.errorCode, parms.error);
+        }
     }
 }
 
