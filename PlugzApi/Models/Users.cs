@@ -192,6 +192,26 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
+        public async Task DeleteUser()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("DeleteUser", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                await cmd.ExecuteNonQueryAsync();
+                AzureStorageService azureStorageService = new AzureStorageService();
+                var hashedUserId = CommonService.HashString(userId.ToString(), "ProfilePhotos");
+                await azureStorageService.DeleteImages("profile-photos", hashedUserId);
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
     }
 }
 

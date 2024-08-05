@@ -51,6 +51,14 @@ namespace PlugzApi.Controllers
             await user.UpdateUserLocation();
             return (user.error == null) ? Ok() : StatusCode(user.error.errorCode, user.error);
         }
+        [HttpDelete("{userId:int}")]
+        public async Task<ActionResult> DeleteUser(int userId)
+        {
+            Users user = new Users();
+            user.userId = userId;
+            await user.DeleteUser();
+            return (user.error == null) ? Ok() : StatusCode(user.error.errorCode, user.error);
+        }
     }
 }
 
