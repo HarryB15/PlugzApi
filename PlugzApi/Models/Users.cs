@@ -15,7 +15,7 @@ namespace PlugzApi.Models
         public bool verified { get; set; }
         private bool tokenExpired = false;
         public string email { get; set; } = "";
-        public DateOnly dob { get; set; }
+        public DateTime dob { get; set; }
         public async Task GetUser()
         {
             try
