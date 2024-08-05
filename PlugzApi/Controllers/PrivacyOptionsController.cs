@@ -18,10 +18,14 @@ namespace PlugzApi.Controllers
             return (privacyOptions.error == null) ? Ok(result) : StatusCode(privacyOptions.error.errorCode, privacyOptions.error);
         }
         [HttpPost]
-        public async Task<ActionResult> UpdInsUsersPrivacyOptions(PrivacyOptions privacyOptions)
+        public async Task<ActionResult> UpdInsUsersPrivacyOptions(List<PrivacyOptions> privacyOptions)
         {
-            await privacyOptions.UpdInsUsersPrivacyOptions();
-            return (privacyOptions.error == null) ? Ok() : StatusCode(privacyOptions.error.errorCode, privacyOptions.error);
+            foreach(var privacyOption in privacyOptions)
+            {
+                await privacyOption.UpdInsUsersPrivacyOptions();
+            }
+            var privacyOptionError = privacyOptions.FirstOrDefault(po => po.error != null);
+            return (privacyOptionError == null) ? Ok() : StatusCode(privacyOptionError.error!.errorCode, privacyOptionError.error);
         }
     }
 }
