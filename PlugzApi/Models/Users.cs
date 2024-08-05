@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
 using PlugzApi.Services;
 
@@ -17,7 +16,6 @@ namespace PlugzApi.Models
         public string email { get; set; } = "";
         public DateTime dob { get; set; }
         public DateTime createdDatetime { get; set; }
-        public bool shareLoc { get; set; }
         public async Task GetUser()
         {
             try
@@ -50,7 +48,6 @@ namespace PlugzApi.Models
                         mustResetPass = (bool)sdr["MustResetPass"];
                         lat = (decimal)sdr["Lat"];
                         lng = (decimal)sdr["Lng"];
-                        shareLoc = (bool)sdr["ShareLoc"];
                     }
                     else
                     {
