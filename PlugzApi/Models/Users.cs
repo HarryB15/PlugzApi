@@ -16,6 +16,7 @@ namespace PlugzApi.Models
         private bool tokenExpired = false;
         public string email { get; set; } = "";
         public DateTime dob { get; set; }
+        public DateTime createdDatetime { get; set; }
         public bool shareLoc { get; set; }
         public async Task GetUser()
         {
@@ -42,8 +43,9 @@ namespace PlugzApi.Models
                     if (sdr.Read())
                     {
                         userName = (string)sdr["UserName"];
-                        dob = (DateTime)sdr["Dob"];
                         email = (string)sdr["Email"];
+                        dob = (DateTime)sdr["Dob"];
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"];
                         verified = (bool)sdr["Verified"];
                         mustResetPass = (bool)sdr["MustResetPass"];
                         lat = (decimal)sdr["Lat"];
