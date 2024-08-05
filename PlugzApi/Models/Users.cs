@@ -212,6 +212,35 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
+        public async Task UpdateUsersEmail()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("UpdateUsersEmail", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+                cmd.Parameters.Add("@emailAlreadyExists", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                await cmd.ExecuteNonQueryAsync();
+                bool emailAlreadyExists = (bool)cmd.Parameters["@emailAlreadyExists"].Value;
+                if (emailAlreadyExists)
+                {
+                    error = new Error()
+                    {
+                        errorCode = StatusCodes.Status400BadRequest,
+                        errorMsg = "An account already exists using that email"
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
     }
 }
 

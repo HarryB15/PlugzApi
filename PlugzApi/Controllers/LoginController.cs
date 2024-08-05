@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph.Models;
-using Microsoft.Graph.Models.ODataErrors;
 using PlugzApi.Interfaces;
 using PlugzApi.Models;
 using PlugzApi.Services;

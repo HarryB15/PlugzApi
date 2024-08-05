@@ -59,6 +59,12 @@ namespace PlugzApi.Controllers
             await user.DeleteUser();
             return (user.error == null) ? Ok() : StatusCode(user.error.errorCode, user.error);
         }
+        [HttpPatch("Email")]
+        public async Task<ActionResult> UpdateUsersEmail(Users user)
+        {
+            await user.UpdateUsersEmail();
+            return (user.error == null) ? Ok() : StatusCode(user.error.errorCode, user.error);
+        }
     }
 }
 
