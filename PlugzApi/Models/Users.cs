@@ -15,6 +15,7 @@ namespace PlugzApi.Models
         public bool verified { get; set; }
         private bool tokenExpired = false;
         public string email { get; set; } = "";
+        public DateOnly dob { get; set; }
         public async Task GetUser()
         {
             try
@@ -78,6 +79,7 @@ namespace PlugzApi.Models
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@userName", SqlDbType.VarChar).Value = userName;
                     cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+                    cmd.Parameters.Add("@dob", SqlDbType.Date).Value = dob;
                     cmd.Parameters.Add("@salt", SqlDbType.VarChar).Value = salt;
                     cmd.Parameters.Add("@hashedPassword", SqlDbType.VarChar).Value = hashedPassword;
                     cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
