@@ -17,7 +17,7 @@ namespace PlugzApi.Models
         public string reference { get; set; } = "";
         public int? extId { get; set; }
         public DateTime sentDatetime { get; set; }
-        public DateTime? createdDatetime { get; set; }
+        public DateTime? completedDatetime { get; set; }
 
         public async Task<List<SupportReqs>> GetUsersSupportRequests()
         {
@@ -42,7 +42,7 @@ namespace PlugzApi.Models
                         reference = (string)sdr["Reference"],
                         extId = (sdr["ExtId"] != DBNull.Value) ? (int)sdr["ExtId"] : null,
                         sentDatetime = (DateTime)sdr["SentDatetime"],
-                        createdDatetime = (sdr["CreatedDatetime"] != DBNull.Value) ? (DateTime)sdr["CreatedDatetime"] : null
+                        completedDatetime = (sdr["CompletedDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletedDatetime"] : null
                     });
                 }
             }
