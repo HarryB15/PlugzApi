@@ -17,6 +17,7 @@ namespace PlugzApi.Models
         public DateTime sentDatetime { get; set; }
         public bool messageRead { get; set; }
         public int? extId { get; set; }
+        public Posts? post { get; set; }
         public async Task InsMessage()
         {
 
@@ -64,6 +65,16 @@ namespace PlugzApi.Models
                         extId = (sdr["ExtId"] != DBNull.Value) ? (int)sdr["ExtId"] : null,
                     };
                     message.userIsSender = (message.senderUserId == userId);
+                    if(message.messageTypeId == 2)
+                    {
+                        message.post = new Posts()
+                        {
+                            postId = (int)message.extId!,
+                            postText = (string)sdr["PostText"],
+                            price = (decimal)sdr["Price"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                        };
+                    }
                     messages.Add(message);
                 }
             }
