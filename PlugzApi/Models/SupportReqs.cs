@@ -70,6 +70,10 @@ namespace PlugzApi.Models
                 if (sdr.Read())
                 {
                     supportRequestId = (int)sdr["SupportRequestId"];
+                    reference = (string)sdr["Reference"];
+                    supportReqStatusId = 1;
+                    supportReqStatus = "New";
+                    sentDatetime = DateTime.Now;
                 }
             }
             catch (Exception ex)
