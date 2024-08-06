@@ -67,6 +67,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@supportReqTypeId", SqlDbType.Int).Value = supportReqTypeId;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@details", SqlDbType.VarChar).Value = details;
+                cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
                 cmd.Parameters.Add("@extId", SqlDbType.Int).Value = extId;
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
