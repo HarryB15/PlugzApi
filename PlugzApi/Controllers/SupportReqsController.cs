@@ -30,7 +30,7 @@ namespace PlugzApi.Controllers
             if (reqs.error == null)
             {
                 var emailError = _emailService.SendSupportEmail(reqs);
-                return (emailError == null) ? Ok() : StatusCode(emailError.errorCode, emailError);
+                return (emailError == null) ? Ok(reqs) : StatusCode(emailError.errorCode, emailError);
             }
             else
             {
