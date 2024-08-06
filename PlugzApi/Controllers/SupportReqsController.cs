@@ -20,7 +20,7 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> GetMessages(SupportReqs reqs)
         {
             await reqs.InsSupportRequests();
-            return (reqs.error == null) ? Ok(reqs.supportRequestId) : StatusCode(reqs.error.errorCode, reqs.error);
+            return (reqs.error == null) ? Ok(reqs) : StatusCode(reqs.error.errorCode, reqs.error);
         }
     }
 }
