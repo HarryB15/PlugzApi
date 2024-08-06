@@ -73,6 +73,7 @@ namespace PlugzApi.Models
                             postText = (string)sdr["PostText"],
                             price = (decimal)sdr["Price"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            userId = (message.userIsSender) ? senderUserId : receiverUserId
                         };
                     }
                     messages.Add(message);
