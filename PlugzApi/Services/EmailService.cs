@@ -46,15 +46,7 @@ namespace PlugzApi.Services
                     $"<p><span class='small-text'>This code will expire in 15 minutes</span><br><br>" +
                     $"Thank you for using our services.<br><br></p>" + footer;
 
-                MailMessage message = new MailMessage(fromAddress, toAddress, subject, body);
-                message.IsBodyHtml = true;
-
-                SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587);
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.EnableSsl = true;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new System.Net.NetworkCredential(fromAddress, _configuration["EmailPassword"]);
-                client.Send(message);
+                SendMessage(toAddress, subject, body);
                 return null;
             }
             catch (Exception ex)
@@ -76,15 +68,7 @@ namespace PlugzApi.Services
                     $"<p><span class='small-text'>If you did not submit this request please reply to this email ASAP.</span><br><br>" +
                     $"Thank you for using our services.<br><br></p>" + footer;
 
-                MailMessage message = new MailMessage(fromAddress, toAddress, subject, body);
-                message.IsBodyHtml = true;
-
-                SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587);
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.EnableSsl = true;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new System.Net.NetworkCredential(fromAddress, _configuration["EmailPassword"]);
-                client.Send(message);
+                SendMessage(toAddress, subject, body);
                 return null;
             }
             catch (Exception ex)
@@ -92,6 +76,57 @@ namespace PlugzApi.Services
                 CommonService.Log(ex);
                 return CommonService.GetUnexpectedErrrorMsg();
             }
+        }
+        public Error? SendSupportEmail(SupportReqs req)
+        {
+            try
+            {
+                string subject = "Support Request: " + req.reference;
+                string reqType = "";
+                if (req.supportReqTypeId == 1)
+                {
+                    reqType = "Report a user";
+                }
+                else if (req.supportReqTypeId == 2)
+                {
+                    reqType = "Problem with order";
+                }
+                else if (req.supportReqTypeId == 3)
+                {
+                    reqType = "Problem with Account";
+                }
+                else
+                {
+                    reqType = "Other";
+                }
+
+                string body = header + $"<p> Hi {req.userName},"
+                    + $"<br><br>This is a confirmation email to confirm we have received your support request.<br><br>"
+                    + $"Request Type: {reqType}<br><br>"
+                    + $"Request Details:<br>{req.details}<br><br>"
+                    + $"We aim to respond to your request within 5 business days, "
+                    + $"thank you for using our services and we appreciate your feedback.<br><br>"
+                    + $"Kind Regards,<br>The Plugz help team</p>" + footer;
+
+                SendMessage(req.email, subject, body);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                return CommonService.GetUnexpectedErrrorMsg();
+            }
+        }
+        private void SendMessage(string toAddress, string subject, string body)
+        {
+            MailMessage message = new MailMessage(fromAddress, toAddress, subject, body);
+            message.IsBodyHtml = true;
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587);
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.Credentials = new System.Net.NetworkCredential(fromAddress, _configuration["EmailPassword"]);
+            client.Send(message);
         }
     }
 }

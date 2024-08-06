@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
+using PlugzApi.Interfaces;
 using PlugzApi.Models;
 
 namespace PlugzApi.Controllers
@@ -8,6 +10,11 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class SupportReqsController: ControllerBase
     {
+        private readonly IEmailService _emailService;
+        public SupportReqsController(IEmailService emailService)
+        {
+            _emailService = emailService;
+        }
         [HttpGet("{userId:int}")]
         public async Task<ActionResult> GetUsersSupportRequests(int userId)
         {
@@ -17,10 +24,18 @@ namespace PlugzApi.Controllers
             return (reqs.error == null) ? Ok(result) : StatusCode(reqs.error.errorCode, reqs.error);
         }
         [HttpPost]
-        public async Task<ActionResult> GetMessages(SupportReqs reqs)
+        public async Task<ActionResult> InsSupportRequests(SupportReqs reqs)
         {
             await reqs.InsSupportRequests();
-            return (reqs.error == null) ? Ok(reqs) : StatusCode(reqs.error.errorCode, reqs.error);
+            if (reqs.error == null)
+            {
+                var emailError = _emailService.SendSupportEmail(reqs);
+                return (emailError == null) ? Ok() : StatusCode(emailError.errorCode, emailError);
+            }
+            else
+            {
+                return StatusCode(reqs.error.errorCode, reqs.error);
+            }
         }
     }
 }

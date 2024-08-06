@@ -7,6 +7,7 @@ namespace PlugzApi.Interfaces
     {
         Error? SendVerificationCodeEmail(string toAddress, int verificationCode);
         Error? SendResetPasswordEmail(string password, string userName, string toAddress);
+        Error? SendSupportEmail(SupportReqs req);
     }
 }
 

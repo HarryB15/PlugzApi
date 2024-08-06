@@ -15,6 +15,8 @@ namespace PlugzApi.Models
         public string supportReqStatus { get; set; } = "";
         public string details { get; set; } = "";
         public string reference { get; set; } = "";
+        public string email { get; set; } = "";
+        public string userName { get; set; } = "";
         public int? extId { get; set; }
         public DateTime sentDatetime { get; set; }
         public DateTime? completedDatetime { get; set; }
