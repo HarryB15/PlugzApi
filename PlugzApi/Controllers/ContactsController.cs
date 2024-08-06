@@ -30,6 +30,14 @@ namespace PlugzApi.Controllers
             await contact.UpdUserContactIsConnected();
             return (contact.error == null) ? Ok() : StatusCode(contact.error.errorCode, contact.error);
         }
+        [HttpGet("Basic/{userId:int}")]
+        public async Task<ActionResult<Contacts>> GetUsersContactsBasic(int userId)
+        {
+            Contacts contact = new Contacts();
+            contact.userId = userId;
+            var result = await contact.GetUsersContactsBasic();
+            return (contact.error == null) ? Ok(result) : StatusCode(contact.error.errorCode, contact.error);
+        }
     }
 }
 
