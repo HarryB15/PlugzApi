@@ -16,7 +16,7 @@ namespace PlugzApi.Models
         public bool userIsSender { get; set; }
         public DateTime sentDatetime { get; set; }
         public bool messageRead { get; set; }
-        public int extId { get; set; }
+        public int? extId { get; set; }
         public async Task InsMessage()
         {
 
@@ -61,6 +61,7 @@ namespace PlugzApi.Models
                         senderUserId = (int)sdr["SenderUserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
                         sentDatetime = (DateTime)sdr["SentDatetime"],
+                        extId = (sdr["ExtId"] != DBNull.Value) ? (int)sdr["ExtId"] : null,
                     };
                     message.userIsSender = (message.senderUserId == userId);
                     messages.Add(message);

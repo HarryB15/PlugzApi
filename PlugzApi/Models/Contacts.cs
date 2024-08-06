@@ -123,6 +123,7 @@ namespace PlugzApi.Models
                     contacts.Add(new Contacts()
                     {
                         contactId = (int)sdr["ContactId"],
+                        isConnected = (bool)sdr["IsConnected"],
                         contactUser = new Users()
                         {
                             userId = (int)sdr["ContactUserId"],

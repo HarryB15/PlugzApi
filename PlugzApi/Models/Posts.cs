@@ -47,7 +47,7 @@ namespace PlugzApi.Models
                         messages.messageTypeId = 2;
                         messages.senderUserId = userId;
                         messages.extId = postId;
-                        foreach(var contact in contacts)
+                        foreach(var contact in contacts.Where(c => c.isConnected))
                         {
                             messages.receiverUserId = contact.contactUser.userId;
                             await messages.InsMessage();
