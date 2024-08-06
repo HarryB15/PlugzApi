@@ -50,7 +50,7 @@ namespace PlugzApi.Models
                         foreach(var contact in contacts)
                         {
                             messages.receiverUserId = contact.contactUser.userId;
-                            await messages.InsMessage()
+                            await messages.InsMessage();
                         }
                     }
                 }
