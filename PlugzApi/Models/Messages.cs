@@ -10,12 +10,13 @@ namespace PlugzApi.Models
 	{
         public int messageId { get; set; }
         public byte messageTypeId { get; set; }
-        public string messageText { get; set; } = "";
+        public string? messageText { get; set; } = null;
         public int senderUserId { get; set; }
         public int receiverUserId { get; set; }
         public bool userIsSender { get; set; }
         public DateTime sentDatetime { get; set; }
         public bool messageRead { get; set; }
+        public int extId { get; set; }
         public async Task InsMessage()
         {
 
@@ -28,6 +29,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@messageText", SqlDbType.NVarChar).Value = messageText;
                 cmd.Parameters.Add("@senderUserId", SqlDbType.Int).Value = senderUserId;
                 cmd.Parameters.Add("@receiverUserId", SqlDbType.Int).Value = receiverUserId;
+                cmd.Parameters.Add("@extId", SqlDbType.Int).Value = extId;
                 await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
@@ -55,7 +57,7 @@ namespace PlugzApi.Models
                     {
                         messageId = (int)sdr["MessageId"],
                         messageTypeId = (byte)sdr["MessageTypeId"],
-                        messageText = (string)sdr["MessageText"],
+                        messageText = (sdr["MessageText"] != DBNull.Value) ? (string)sdr["MessageText"] : null,
                         senderUserId = (int)sdr["SenderUserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
                         sentDatetime = (DateTime)sdr["SentDatetime"],

@@ -44,7 +44,7 @@ namespace PlugzApi.Models
                         contact.mostRecentMsg = new Messages()
                         {
                             messageId = (int)sdr["MessageId"],
-                            messageText = (string)sdr["MessageText"],
+                            messageText = (sdr["MessageText"] != DBNull.Value) ? (string)sdr["MessageText"] : null,
                             userIsSender = (bool)sdr["UserIsSender"],
                             sentDatetime = (DateTime)sdr["SentDatetime"],
                             messageRead = (bool)sdr["MessageRead"]

@@ -18,7 +18,7 @@ namespace PlugzApi.Models
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
 
-        public async Task InsPosts()
+        public async Task InsPosts(bool shareWithContacts)
         {
             try
             {
@@ -32,7 +32,28 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@minSales", SqlDbType.SmallInt).Value = minSales;
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
-                await cmd.ExecuteNonQueryAsync();
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    postId = (int)sdr["PostId"];
+                    await sdr.CloseAsync();
+                    if (shareWithContacts)
+                    {
+                        var contactObj = new Contacts();
+                        contactObj.userId = userId;
+                        var contacts = await contactObj.GetUsersContactsBasic();
+
+                        var messages = new Messages();
+                        messages.messageTypeId = 2;
+                        messages.senderUserId = userId;
+                        messages.extId = postId;
+                        foreach(var contact in contacts)
+                        {
+                            messages.receiverUserId = contact.contactUser.userId;
+                            await messages.InsMessage()
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

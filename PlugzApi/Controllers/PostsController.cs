@@ -8,10 +8,10 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class PostsController: ControllerBase
 	{
-        [HttpPost]
-        public async Task<ActionResult> InsPosts(Posts post)
+        [HttpPost("{shareWithContacts:bool}")]
+        public async Task<ActionResult> InsPosts(Posts post, bool shareWithContacts)
         {
-            await post.InsPosts();
+            await post.InsPosts(shareWithContacts);
             return (post.error == null) ? Ok() : StatusCode(post.error.errorCode, post.error);
         }
         [HttpDelete]
