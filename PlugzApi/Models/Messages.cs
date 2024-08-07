@@ -18,6 +18,7 @@ namespace PlugzApi.Models
         public bool messageRead { get; set; }
         public int? extId { get; set; }
         public Posts? post { get; set; }
+        public Listings? listing { get; set; }
         public async Task InsMessage()
         {
 
@@ -75,6 +76,19 @@ namespace PlugzApi.Models
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
                             userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId
                         };
+                    }
+                    else if(message.messageTypeId == 3)
+                    {
+                        message.listing = new Listings()
+                        {
+                            listingId = (int)message.extId!,
+                            userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId,
+                            listingDesc = (string)sdr["ListingDesc"],
+                            price = (decimal)sdr["Price"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                        };
+                        await message.listing.GetImages();
                     }
                     messages.Add(message);
                 }
