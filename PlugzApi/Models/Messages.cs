@@ -72,8 +72,8 @@ namespace PlugzApi.Models
                         {
                             postId = (int)message.extId!,
                             postText = (string)sdr["PostText"],
-                            price = (decimal)sdr["Price"],
-                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            price = (decimal)sdr["PostPrice"],
+                            createdDatetime = (DateTime)sdr["PostCreatedDatetime"],
                             userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId
                         };
                     }
@@ -84,9 +84,9 @@ namespace PlugzApi.Models
                             listingId = (int)message.extId!,
                             userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId,
                             listingDesc = (string)sdr["ListingDesc"],
-                            price = (decimal)sdr["Price"],
-                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                            price = (decimal)sdr["ListingPrice"],
+                            createdDatetime = (DateTime)sdr["ListingCreatedDatetime"],
+                            expiryDatetime = (sdr["ListingExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ListingExpiryDatetime"] : null
                         };
                         await message.listing.GetImages();
                     }
