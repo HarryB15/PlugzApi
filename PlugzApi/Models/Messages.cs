@@ -19,6 +19,7 @@ namespace PlugzApi.Models
         public int? extId { get; set; }
         public Posts? post { get; set; }
         public Listings? listing { get; set; }
+        public Offer? offer { get; set; }
         public async Task InsMessage()
         {
 
@@ -89,6 +90,16 @@ namespace PlugzApi.Models
                             expiryDatetime = (sdr["ListingExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ListingExpiryDatetime"] : null
                         };
                         await message.listing.GetImages();
+                    }
+                    else if(message.messageTypeId == 4)
+                    {
+                        message.offer = new Offer()
+                        {
+                            offerId = (int)message.extId!,
+                            listingId = (int)sdr["OfferListingId"],
+                            offerValue = (decimal)sdr["OfferValue"],
+                            responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null
+                        };
                     }
                     messages.Add(message);
                 }
