@@ -46,7 +46,7 @@ namespace PlugzApi.Models
                 con = await CommonService.Instance.Open();
                 cmd = new SqlCommand("UpdOfferResponse", con);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = offerId;
+                cmd.Parameters.Add("@offerId", SqlDbType.Int).Value = offerId;
                 cmd.Parameters.Add("@responseType", SqlDbType.Char).Value = responseType;
                 await cmd.ExecuteNonQueryAsync();
             }
