@@ -81,6 +81,7 @@ namespace PlugzApi.Models
                     contactId = (int)sdr["ContactId"];
                     connectionStatus = (int)sdr["ConnectionStatus"];
                     contactUser.userName = (string)sdr["UserName"];
+                    contactUser.lastActive = (sdr["LastActive"] != DBNull.Value) ? (DateTime)sdr["LastActive"] : null;
                 }
             }
             catch (Exception ex)

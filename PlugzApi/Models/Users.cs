@@ -16,6 +16,7 @@ namespace PlugzApi.Models
         public string email { get; set; } = "";
         public DateTime dob { get; set; }
         public DateTime createdDatetime { get; set; }
+        public DateTime? lastActive { get; set; }
         public async Task GetUser()
         {
             try
