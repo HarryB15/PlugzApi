@@ -72,10 +72,10 @@ namespace PlugzApi.Models
                         message.post = new Posts()
                         {
                             postId = (int)message.extId!,
+                            userId = (int)sdr["PostUserId"],
                             postText = (string)sdr["PostText"],
                             price = (decimal)sdr["PostPrice"],
-                            createdDatetime = (DateTime)sdr["PostCreatedDatetime"],
-                            userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId
+                            createdDatetime = (DateTime)sdr["PostCreatedDatetime"]
                         };
                     }
                     else if(message.messageTypeId == 3)
@@ -83,7 +83,7 @@ namespace PlugzApi.Models
                         message.listing = new Listings()
                         {
                             listingId = (int)message.extId!,
-                            userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId,
+                            userId = (int)sdr["ListingUserId"],
                             listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["ListingCreatedDatetime"],
@@ -96,7 +96,7 @@ namespace PlugzApi.Models
                         message.offer = new Offer()
                         {
                             offerId = (int)message.extId!,
-                            userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId,
+                            userId = (int)sdr["OfferUserId"],
                             listingId = (int)sdr["OfferListingId"],
                             offerValue = (decimal)sdr["OfferValue"],
                             responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null,
@@ -105,7 +105,7 @@ namespace PlugzApi.Models
                         message.offer.listing = new Listings()
                         {
                             listingId = message.offer.listingId,
-                            userId = message.offer.userId,
+                            userId = (int)sdr["OfferListingUserId"],
                             listingDesc = (string)sdr["OfferListingDesc"],
                             price = (decimal)sdr["OfferListingPrice"],
                             createdDatetime = (DateTime)sdr["OfferListingCreated"],
