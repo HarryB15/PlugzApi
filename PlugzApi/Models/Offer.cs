@@ -15,7 +15,7 @@ namespace PlugzApi.Models
         public string? responseType { get; set; }
         public int? oriOfferId { get; set; }
         public Listings listing { get; set; } = new Listings();
-        public async Task InsOffer()
+        public async Task InsOffer(int receiverUserId)
 		{
             try
             {
@@ -27,6 +27,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@offerValue", SqlDbType.Decimal).Value = offerValue;
                 cmd.Parameters.Add("@offerText", SqlDbType.NVarChar).Value = offerText;
                 cmd.Parameters.Add("@oriOfferId", SqlDbType.Int).Value = oriOfferId;
+                cmd.Parameters.Add("@receiverUserId", SqlDbType.Int).Value = receiverUserId;
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
                 {

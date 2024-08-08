@@ -8,10 +8,10 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class OfferController: ControllerBase
 	{
-        [HttpPost]
-        public async Task<ActionResult> InsOffer(Offer offer)
+        [HttpPost("{receiverUserId:int}")]
+        public async Task<ActionResult> InsOffer(Offer offer, int receiverUserId)
         {
-            await offer.InsOffer();
+            await offer.InsOffer(receiverUserId);
             return (offer.error == null) ? Ok(offer.offerId) : StatusCode(offer.error.errorCode, offer.error);
         }
         [HttpPatch]
