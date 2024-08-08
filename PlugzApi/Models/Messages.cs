@@ -96,11 +96,22 @@ namespace PlugzApi.Models
                         message.offer = new Offer()
                         {
                             offerId = (int)message.extId!,
+                            userId = (message.userIsSender) ? message.senderUserId : message.receiverUserId,
                             listingId = (int)sdr["OfferListingId"],
                             offerValue = (decimal)sdr["OfferValue"],
                             responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null,
                             oriOfferId = (sdr["OriOfferId"] != DBNull.Value) ? (int)sdr["OriOfferId"] : null
                         };
+                        message.offer.listing = new Listings()
+                        {
+                            listingId = message.offer.listingId,
+                            userId = message.offer.userId,
+                            listingDesc = (string)sdr["OfferListingDesc"],
+                            price = (decimal)sdr["OfferListingPrice"],
+                            createdDatetime = (DateTime)sdr["OfferListingCreated"],
+                            expiryDatetime = (sdr["OfferListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null
+                        };
+                        await message.offer.listing.GetImages();
                     }
                     messages.Add(message);
                 }

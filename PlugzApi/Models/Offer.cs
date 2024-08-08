@@ -14,6 +14,7 @@ namespace PlugzApi.Models
 		public decimal offerValue { get; set; }
         public string? responseType { get; set; }
         public int? oriOfferId { get; set; }
+        public Listings listing { get; set; } = new Listings();
         public async Task InsOffer()
 		{
             try
