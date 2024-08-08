@@ -98,7 +98,8 @@ namespace PlugzApi.Models
                             offerId = (int)message.extId!,
                             listingId = (int)sdr["OfferListingId"],
                             offerValue = (decimal)sdr["OfferValue"],
-                            responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null
+                            responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null,
+                            oriOfferId = (sdr["OriOfferId"] != DBNull.Value) ? (int)sdr["OriOfferId"] : null
                         };
                     }
                     messages.Add(message);

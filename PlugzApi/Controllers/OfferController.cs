@@ -14,6 +14,12 @@ namespace PlugzApi.Controllers
             await offer.InsOffer();
             return (offer.error == null) ? Ok(offer.offerId) : StatusCode(offer.error.errorCode, offer.error);
         }
+        [HttpPatch]
+        public async Task<ActionResult> UpdOfferResponse(Offer offer)
+        {
+            await offer.UpdOfferResponse();
+            return (offer.error == null) ? Ok() : StatusCode(offer.error.errorCode, offer.error);
+        }
     }
 }
 
