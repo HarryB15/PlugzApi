@@ -12,7 +12,7 @@ namespace PlugzApi.Services
 		{
 			StripeConfiguration.ApiKey = CommonService.Instance.GetConfig("StripeSK");
         }
-        public string? GetPaymentIntent(long amount)
+        public PaymentIntent? GetPaymentIntent(long amount)
         {
             try
             {
@@ -26,8 +26,7 @@ namespace PlugzApi.Services
                     },
                 };
                 var service = new PaymentIntentService();
-                var paymentIntent = service.Create(options);
-                return paymentIntent.Id;
+                return service.Create(options);
             }
             catch (Exception ex)
             {

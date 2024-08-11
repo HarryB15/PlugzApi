@@ -11,8 +11,8 @@ namespace PlugzApi.Controllers
         [HttpPost]
         public async Task<ActionResult> InsPurchases(Purchases purchase)
         {
-            await purchase.InsPurchases();
-            return (purchase.error == null) ? Ok(purchase.payIntentId) : StatusCode(purchase.error.errorCode, purchase.error);
+            var payIntentClientSecret = await purchase.InsPurchases();
+            return (purchase.error == null) ? Ok(payIntentClientSecret) : StatusCode(purchase.error.errorCode, purchase.error);
         }
     }
 }

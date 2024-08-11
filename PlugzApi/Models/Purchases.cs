@@ -18,16 +18,16 @@ namespace PlugzApi.Models
         public DateTime completionDatetime { get; set; }
         public int listingId { get; set; }
         public int offerId { get; set; }
-        public string? payIntentId { get; set; }
 
-        public async Task InsPurchases()
+        public async Task<string?> InsPurchases()
         {
+            string? payIntentClientSecret = null;
             try
             {
                 fee = (price < 5) ? (decimal)0.5 : price * (decimal)0.1;
                 StripeService stripe = new StripeService();
-                payIntentId = stripe.GetPaymentIntent((long)(fee + price) * 100);
-                if (payIntentId != null)
+                var paymentIntent = stripe.GetPaymentIntent((long)(fee + price) * 100);
+                if (paymentIntent != null)
                 {
                     con = await CommonService.Instance.Open();
                     cmd = new SqlCommand("InsPurchases", con);
@@ -37,8 +37,9 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@offerId", SqlDbType.Int).Value = (offerId > 0) ? offerId : null;
                     cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                     cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
-                    cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = payIntentId;
+                    cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = paymentIntent.Id;
                     await cmd.ExecuteNonQueryAsync();
+                    payIntentClientSecret = paymentIntent.ClientSecret;
                 }
                 else
                 {
@@ -51,6 +52,7 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+            return payIntentClientSecret;
         }
     }
 }
