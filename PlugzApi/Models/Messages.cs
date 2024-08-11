@@ -80,16 +80,25 @@ namespace PlugzApi.Models
                     }
                     else if(message.messageTypeId == 3)
                     {
-                        message.listing = new Listings()
+                        var existingListing = messages.Where(m => m.listing != null).Select(m => m.listing!)
+                            .FirstOrDefault(l => l.listingId == message.extId);
+                        if(existingListing != null)
                         {
-                            listingId = (int)message.extId!,
-                            userId = (int)sdr["ListingUserId"],
-                            listingDesc = (string)sdr["ListingDesc"],
-                            price = (decimal)sdr["ListingPrice"],
-                            createdDatetime = (DateTime)sdr["ListingCreatedDatetime"],
-                            expiryDatetime = (sdr["ListingExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ListingExpiryDatetime"] : null
-                        };
-                        await message.listing.GetImages();
+                            message.listing = existingListing;
+                        }
+                        else
+                        {
+                            message.listing = new Listings()
+                            {
+                                listingId = (int)message.extId!,
+                                userId = (int)sdr["ListingUserId"],
+                                listingDesc = (string)sdr["ListingDesc"],
+                                price = (decimal)sdr["ListingPrice"],
+                                createdDatetime = (DateTime)sdr["ListingCreated"],
+                                expiryDatetime = (sdr["ListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null
+                            };
+                            await message.listing.GetImages();
+                        }
                     }
                     else if(message.messageTypeId == 4)
                     {
@@ -102,16 +111,26 @@ namespace PlugzApi.Models
                             responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null,
                             oriOfferId = (sdr["OriOfferId"] != DBNull.Value) ? (int)sdr["OriOfferId"] : null
                         };
-                        message.offer.listing = new Listings()
+
+                        var existingListing = messages.Where(m => m.offer != null).Select(m => m.offer!.listing)
+                            .FirstOrDefault(l => l.listingId == message.offer.listingId);
+                        if(existingListing != null)
                         {
-                            listingId = message.offer.listingId,
-                            userId = (int)sdr["OfferListingUserId"],
-                            listingDesc = (string)sdr["OfferListingDesc"],
-                            price = (decimal)sdr["OfferListingPrice"],
-                            createdDatetime = (DateTime)sdr["OfferListingCreated"],
-                            expiryDatetime = (sdr["OfferListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null
-                        };
-                        await message.offer.listing.GetImages();
+                            message.offer.listing = existingListing;
+                        }
+                        else
+                        {
+                            message.offer.listing = new Listings()
+                            {
+                                listingId = message.offer.listingId,
+                                userId = (int)sdr["OfferListingUserId"],
+                                listingDesc = (string)sdr["OfferListingDesc"],
+                                price = (decimal)sdr["OfferListingPrice"],
+                                createdDatetime = (DateTime)sdr["OfferListingCreated"],
+                                expiryDatetime = (sdr["OfferListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null
+                            };
+                            await message.offer.listing.GetImages();
+                        }
                     }
                     messages.Add(message);
                 }
