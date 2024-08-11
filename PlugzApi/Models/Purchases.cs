@@ -38,8 +38,12 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                     cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
                     cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = paymentIntent.Id;
-                    await cmd.ExecuteNonQueryAsync();
-                    payIntentCS = paymentIntent.ClientSecret;
+                    sdr = await cmd.ExecuteReaderAsync();
+                    if (sdr.Read())
+                    {
+                        payIntentCS = paymentIntent.ClientSecret;
+                        purchaseId = (int)sdr["PurchaseId"];
+                    }
                 }
                 else
                 {
