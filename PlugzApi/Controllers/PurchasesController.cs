@@ -22,6 +22,14 @@ namespace PlugzApi.Controllers
             await purchase.DeletePurchases();
             return (purchase.error == null) ? Ok() : StatusCode(purchase.error.errorCode, purchase.error);
         }
+        [HttpGet("{userId:int}/{liveOnly:bool}")]
+        public async Task<ActionResult> DeletePurchases(int userId, bool liveOnly)
+        {
+            var purchase = new Purchases();
+            purchase.userId = userId;
+            var purchases = await purchase.GetUsersPurchases(liveOnly);
+            return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
+        }
     }
 }
 

@@ -15,10 +15,10 @@ namespace PlugzApi.Models
         public decimal price { get; set; }
         public decimal fee { get; set; }
         public DateTime purchaseDatetime { get; set; }
-        public DateTime completionDatetime { get; set; }
-        public int listingId { get; set; }
+        public DateTime? completionDatetime { get; set; }
         public int offerId { get; set; }
         public string? payIntentCS { get; set; }
+        public Listings listing { get; set; } = new Listings();
 
         public async Task InsPurchases()
         {
@@ -33,7 +33,7 @@ namespace PlugzApi.Models
                     cmd = new SqlCommand("InsPurchases", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listing.listingId;
                     cmd.Parameters.Add("@offerId", SqlDbType.Int).Value = (offerId > 0) ? offerId : null;
                     cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                     cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
@@ -73,6 +73,50 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+        }
+        public async Task<List<Purchases>> GetUsersPurchases(bool liveOnly)
+        {
+            List<Purchases> purchases = new List<Purchases>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUsersPurchases", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@liveOnly", SqlDbType.Bit).Value = liveOnly;
+                sdr = await cmd.ExecuteReaderAsync();
+                while(sdr.Read())
+                {
+                    Purchases purchase = new Purchases()
+                    {
+                        purchaseId = (int)sdr["PurchaseId"],
+                        purchaseStatusId = (int)sdr["PurchaseStatusId"],
+                        purchaseStatus = (string)sdr["PurchaseStatus"],
+                        price = (decimal)sdr["PurchasePrice"],
+                        fee = (decimal)sdr["Fee"],
+                        purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
+                        completionDatetime = (sdr["CompletionDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletionDatetime"] : null,
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
+                            userId = (int)sdr["ListingUserId"],
+                            userName = (string)sdr["ListingUserName"],
+                            price = (decimal)sdr["ListingPrice"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                        }
+                    };
+                    await purchase.listing.GetImages();
+                    purchases.Add(purchase);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return purchases;
         }
     }
 }
