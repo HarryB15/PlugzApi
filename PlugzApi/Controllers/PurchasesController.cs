@@ -12,7 +12,7 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> InsPurchases(Purchases purchase)
         {
             await purchase.InsPurchases();
-            return (purchase.error == null) ? Ok() : StatusCode(purchase.error.errorCode, purchase.error);
+            return (purchase.error == null) ? Ok(purchase.payIntentId) : StatusCode(purchase.error.errorCode, purchase.error);
         }
     }
 }

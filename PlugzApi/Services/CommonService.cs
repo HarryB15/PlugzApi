@@ -140,6 +140,10 @@ namespace PlugzApi.Services
             }
             return dt;
         }
+        public string GetConfig(string key)
+        {
+            return _configuration[key]!;
+        }
     }
 }
 

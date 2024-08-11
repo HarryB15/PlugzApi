@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SqlClient;
 using PlugzApi.Models;
 using PlugzApi.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlugzApi.Models
 {
@@ -17,20 +16,34 @@ namespace PlugzApi.Models
         public decimal fee { get; set; }
         public DateTime purchaseDatetime { get; set; }
         public DateTime completionDatetime { get; set; }
-        public Listings listing { get; set; } = new Listings();
+        public int listingId { get; set; }
+        public int offerId { get; set; }
+        public string? payIntentId { get; set; }
 
         public async Task InsPurchases()
         {
             try
             {
-                con = await CommonService.Instance.Open();
-                cmd = new SqlCommand("InsPurchases", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listing.listingId;
-                cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
-                cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
-                await cmd.ExecuteNonQueryAsync();
+                fee = (price < 5) ? (decimal)0.5 : price * (decimal)0.1;
+                StripeService stripe = new StripeService();
+                payIntentId = stripe.GetPaymentIntent((long)(fee + price) * 100);
+                if (payIntentId != null)
+                {
+                    con = await CommonService.Instance.Open();
+                    cmd = new SqlCommand("InsPurchases", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                    cmd.Parameters.Add("@offerId", SqlDbType.Int).Value = (offerId > 0) ? offerId : null;
+                    cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
+                    cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
+                    cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = payIntentId;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                else
+                {
+                    error = CommonService.GetUnexpectedErrrorMsg();
+                }
             }
             catch (Exception ex)
             {
