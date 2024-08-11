@@ -18,10 +18,10 @@ namespace PlugzApi.Models
         public DateTime completionDatetime { get; set; }
         public int listingId { get; set; }
         public int offerId { get; set; }
+        public string? payIntentCS { get; set; }
 
-        public async Task<string?> InsPurchases()
+        public async Task InsPurchases()
         {
-            string? payIntentClientSecret = null;
             try
             {
                 fee = (price < 5) ? (decimal)0.5 : price * (decimal)0.1;
@@ -39,7 +39,7 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
                     cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = paymentIntent.Id;
                     await cmd.ExecuteNonQueryAsync();
-                    payIntentClientSecret = paymentIntent.ClientSecret;
+                    payIntentCS = paymentIntent.ClientSecret;
                 }
                 else
                 {
@@ -52,7 +52,23 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
-            return payIntentClientSecret;
+        }
+        public async Task DeletePurchases()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("DeletePurchase", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@purchaseId", SqlDbType.Int).Value = purchaseId;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
         }
     }
 }

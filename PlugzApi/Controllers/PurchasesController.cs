@@ -11,8 +11,16 @@ namespace PlugzApi.Controllers
         [HttpPost]
         public async Task<ActionResult> InsPurchases(Purchases purchase)
         {
-            var payIntentClientSecret = await purchase.InsPurchases();
-            return (purchase.error == null) ? Ok(payIntentClientSecret) : StatusCode(purchase.error.errorCode, purchase.error);
+            await purchase.InsPurchases();
+            return (purchase.error == null) ? Ok(purchase) : StatusCode(purchase.error.errorCode, purchase.error);
+        }
+        [HttpDelete("{purchaseId:int}")]
+        public async Task<ActionResult> DeletePurchases(int purchaseId)
+        {
+            var purchase = new Purchases();
+            purchase.purchaseId = purchaseId;
+            await purchase.DeletePurchases();
+            return (purchase.error == null) ? Ok() : StatusCode(purchase.error.errorCode, purchase.error);
         }
     }
 }
