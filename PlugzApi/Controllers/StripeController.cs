@@ -17,7 +17,7 @@ namespace PlugzApi.Controllers
             {
                 var stripeEvent = EventUtility.ParseEvent(json);
                 var signatureHeader = Request.Headers["Stripe-Signature"];
-                stripeEvent = EventUtility.ConstructEvent(json, signatureHeader, CommonService.Instance.GetConfig("StripeSK"));
+                stripeEvent = EventUtility.ConstructEvent(json, signatureHeader, CommonService.Instance.GetConfig("StripeWebhook"));
                 StripeService stripeService = new StripeService();
                 if (await stripeService.PaymentComplete(stripeEvent))
                 {
