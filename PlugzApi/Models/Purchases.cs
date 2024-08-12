@@ -84,6 +84,7 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@liveOnly", SqlDbType.Bit).Value = liveOnly;
+                cmd.Parameters.Add("@existingPurchaseIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while(sdr.Read())
                 {
