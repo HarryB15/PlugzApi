@@ -102,6 +102,7 @@ namespace PlugzApi.Models
                             listingId = (int)sdr["ListingId"],
                             userId = (int)sdr["ListingUserId"],
                             userName = (string)sdr["ListingUserName"],
+                            listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
                             expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
