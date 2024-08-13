@@ -18,6 +18,7 @@ namespace PlugzApi.Models
         public DateTime? completionDatetime { get; set; }
         public int offerId { get; set; }
         public string? payIntentCS { get; set; }
+        public bool userSharingLoc { get; set; }
         public Listings listing { get; set; } = new Listings();
 
         public async Task InsPurchases()
@@ -97,6 +98,7 @@ namespace PlugzApi.Models
                         fee = (decimal)sdr["Fee"],
                         purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
                         completionDatetime = (sdr["CompletionDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletionDatetime"] : null,
+                        userSharingLoc = (bool)sdr["UserSharingLoc"],
                         listing = new Listings()
                         {
                             listingId = (int)sdr["ListingId"],
