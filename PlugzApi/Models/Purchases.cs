@@ -99,6 +99,8 @@ namespace PlugzApi.Models
                         purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
                         completionDatetime = (sdr["CompletionDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletionDatetime"] : null,
                         userSharingLoc = (bool)sdr["UserSharingLoc"],
+                        lat = (decimal)sdr["Lat"],
+                        lng = (decimal)sdr["Lng"],
                         listing = new Listings()
                         {
                             listingId = (int)sdr["ListingId"],
