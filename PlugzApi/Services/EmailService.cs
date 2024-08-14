@@ -77,7 +77,7 @@ namespace PlugzApi.Services
                 return CommonService.GetUnexpectedErrrorMsg();
             }
         }
-        public Error? SendSupportEmail(SupportReqs req)
+        public void SendSupportEmail(SupportReqs req)
         {
             try
             {
@@ -109,12 +109,10 @@ namespace PlugzApi.Services
                     + $"Kind Regards,<br>The Plugz help team</p>" + footer;
 
                 SendMessage(req.email, subject, body);
-                return null;
             }
             catch (Exception ex)
             {
                 CommonService.Log(ex);
-                return CommonService.GetUnexpectedErrrorMsg();
             }
         }
         private void SendMessage(string toAddress, string subject, string body)

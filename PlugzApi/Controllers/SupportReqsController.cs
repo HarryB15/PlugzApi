@@ -29,8 +29,8 @@ namespace PlugzApi.Controllers
             await reqs.InsSupportRequests();
             if (reqs.error == null)
             {
-                var emailError = _emailService.SendSupportEmail(reqs);
-                return (emailError == null) ? Ok(reqs) : StatusCode(emailError.errorCode, emailError);
+                _emailService.SendSupportEmail(reqs);
+                return Ok(reqs);
             }
             else
             {
