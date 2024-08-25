@@ -14,6 +14,7 @@ namespace PlugzApi.Models
         public bool connectionsOnly { get; set; }
         public int maxDist { get; set; }
         public string pickUpDropOff { get; set; } = "";
+        public Location location { get; set; } = new Location();
         public List<Listings> listings { get; set; } = new List<Listings>();
         public List<Posts> posts { get; set; } = new List<Posts>();
 
@@ -25,8 +26,8 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetListings", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 cmd.Parameters.Add("@maxPrice", SqlDbType.Decimal).Value = maxPrice;
                 cmd.Parameters.Add("@minPrice", SqlDbType.Decimal).Value = minPrice;
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
@@ -42,8 +43,11 @@ namespace PlugzApi.Models
                         userId = (int)sdr["UserId"],
                         listingDesc = (string)sdr["ListingDesc"],
                         price = (decimal)sdr["Price"],
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        },
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"]
@@ -70,8 +74,8 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetPosts", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 cmd.Parameters.Add("@maxPrice", SqlDbType.Decimal).Value = maxPrice;
                 cmd.Parameters.Add("@minPrice", SqlDbType.Decimal).Value = minPrice;
                 cmd.Parameters.Add("@connectionsOnly", SqlDbType.Bit).Value = connectionsOnly;
@@ -90,8 +94,11 @@ namespace PlugzApi.Models
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"],
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"]
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        }
                     };
                     posts.Add(post);
                 }
@@ -111,8 +118,8 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetListingsMap", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
@@ -122,11 +129,14 @@ namespace PlugzApi.Models
                         userId = (int)sdr["UserId"],
                         listingDesc = (string)sdr["ListingDesc"],
                         price = (decimal)sdr["Price"],
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"]
+                        userName = (string)sdr["UserName"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        },
                     };
                     listings.Add(listing);
                 }
@@ -150,8 +160,8 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetPostsMap", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
@@ -165,8 +175,11 @@ namespace PlugzApi.Models
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
                         userName = (string)sdr["UserName"],
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"]
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        }
                     };
                     posts.Add(post);
                 }

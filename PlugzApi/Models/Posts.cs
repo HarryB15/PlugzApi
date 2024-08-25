@@ -17,6 +17,7 @@ namespace PlugzApi.Models
         public DateTime? expiryDatetime { get; set; }
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
+        public Location location { get; set; } = new Location();
 
         public async Task InsPosts(bool shareWithContacts)
         {

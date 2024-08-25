@@ -20,6 +20,7 @@ namespace PlugzApi.Models
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
         public string pickUpDropOff { get; set; } = "";
+        public Location location { get; set; } = new Location();
         public List<Images> images { get; set; } = new List<Images>();
         public List<Keywords> keywords { get; set; } = new List<Keywords>();
 
@@ -231,8 +232,8 @@ namespace PlugzApi.Models
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@searchWords", SqlDbType.Structured).Value = dt;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
@@ -243,11 +244,14 @@ namespace PlugzApi.Models
                         userId = (int)sdr["UserId"],
                         listingDesc = (string)sdr["ListingDesc"],
                         price = (decimal)sdr["Price"],
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"],
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"]
+                        userName = (string)sdr["UserName"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        },
                     };
                     listings.Add(listing);
                 }

@@ -17,6 +17,7 @@ namespace PlugzApi.Models
         public DateTime dob { get; set; }
         public DateTime createdDatetime { get; set; }
         public DateTime? lastActive { get; set; }
+        public Location location { get; set; } = new Location();
         public async Task GetUser()
         {
             try
@@ -47,8 +48,8 @@ namespace PlugzApi.Models
                         createdDatetime = (DateTime)sdr["CreatedDatetime"];
                         verified = (bool)sdr["Verified"];
                         mustResetPass = (bool)sdr["MustResetPass"];
-                        lat = (decimal)sdr["Lat"];
-                        lng = (decimal)sdr["Lng"];
+                        location.lat = (decimal)sdr["Lat"];
+                        location.lng = (decimal)sdr["Lng"];
                     }
                     else
                     {
@@ -85,8 +86,8 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@dob", SqlDbType.Date).Value = dob;
                     cmd.Parameters.Add("@salt", SqlDbType.VarChar).Value = salt;
                     cmd.Parameters.Add("@hashedPassword", SqlDbType.VarChar).Value = hashedPassword;
-                    cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                    cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                    cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                    cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                     sdr = await cmd.ExecuteReaderAsync();
                     if (sdr.Read())
                     {
@@ -179,8 +180,8 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("UpdateUserLocation", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
-                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 await cmd.ExecuteNonQueryAsync();
             }
             catch (Exception ex)

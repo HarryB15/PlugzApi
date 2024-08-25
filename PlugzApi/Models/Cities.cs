@@ -11,6 +11,7 @@ namespace PlugzApi.Models
 		public string city { get; set; } = "";
 		public string? county { get; set; }
 		public string countryCode { get; set; } = "";
+        public Location location { get; set; } = new Location();
 
 		public async Task<List<Cities>> GetCities()
 		{
@@ -31,8 +32,11 @@ namespace PlugzApi.Models
                         city = (string)sdr["City"],
                         county = (sdr["County"] != DBNull.Value) ? (string)sdr["County"] : null,
                         countryCode = countryCode,
-                        lat = (decimal)sdr["Lat"],
-                        lng = (decimal)sdr["Lng"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        }
                     };
                     cities.Add(city);
                 }
