@@ -31,11 +31,9 @@ namespace PlugzApi.Controllers
             await rating.GetRating();
             return (rating.error == null) ? Ok(rating) : StatusCode(rating.error.errorCode, rating.error);
         }
-        [HttpGet("Detail/{userId:int}")]
-        public async Task<ActionResult> GetUserRatingDetail(int userId)
+        [HttpPost("Detail")]
+        public async Task<ActionResult> GetUserRatingDetail(UserRatings rating)
         {
-            UserRatings rating = new UserRatings();
-            rating.userId = userId;
             var ratings = await rating.GetUserRatingDetail();
             return (rating.error == null) ? Ok(ratings) : StatusCode(rating.error.errorCode, rating.error);
         }
