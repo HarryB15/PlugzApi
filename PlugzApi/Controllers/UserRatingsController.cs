@@ -23,13 +23,21 @@ namespace PlugzApi.Controllers
             return (rating.error == null) ? Ok() : StatusCode(rating.error.errorCode, rating.error);
         }
         [HttpGet("{userId:int}/{listingId:int}")]
-        public async Task<ActionResult> GetRating(int userId, int listingId)
+        public async Task<ActionResult> GetRating(int userId, int purchaseId)
         {
             UserRatings rating = new UserRatings();
             rating.userId = userId;
-            rating.listingId = listingId;
+            rating.purchaseId = purchaseId;
             await rating.GetRating();
             return (rating.error == null) ? Ok(rating) : StatusCode(rating.error.errorCode, rating.error);
+        }
+        [HttpGet("Detail/{userId:int}")]
+        public async Task<ActionResult> GetUserRatingDetail(int userId)
+        {
+            UserRatings rating = new UserRatings();
+            rating.userId = userId;
+            var ratings = await rating.GetUserRatingDetail();
+            return (rating.error == null) ? Ok(ratings) : StatusCode(rating.error.errorCode, rating.error);
         }
     }
 }
