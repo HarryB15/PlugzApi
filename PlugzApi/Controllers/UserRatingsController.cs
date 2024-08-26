@@ -22,7 +22,7 @@ namespace PlugzApi.Controllers
             await rating.UpdInsUserRatings();
             return (rating.error == null) ? Ok() : StatusCode(rating.error.errorCode, rating.error);
         }
-        [HttpGet("{userId:int}/{listingId:int}")]
+        [HttpGet("{userId:int}/{purchaseId:int}")]
         public async Task<ActionResult> GetRating(int userId, int purchaseId)
         {
             UserRatings rating = new UserRatings();
