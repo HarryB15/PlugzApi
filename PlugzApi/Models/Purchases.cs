@@ -19,6 +19,7 @@ namespace PlugzApi.Models
         public int offerId { get; set; }
         public string? payIntentCS { get; set; }
         public bool userSharingLoc { get; set; }
+        public string purchaseRef { get; set; } = "";
         public Listings listing { get; set; } = new Listings();
         public Location location { get; set; } = new Location();
 
@@ -117,6 +118,8 @@ namespace PlugzApi.Models
                         }
                     };
                     await purchase.listing.GetImages();
+                    var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
+                    purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
                     purchases.Add(purchase);
                 }
             }
