@@ -41,6 +41,7 @@ namespace PlugzApi.Models
                     totalListings = (int)sdr["TotalListings"];
                     liveListings = (int)sdr["LiveListings"];
                     rating.avgRating = (decimal)sdr["avgRating"];
+                    rating.totalRatings = (int)sdr["TotalRatings"];
                     totalConnections = (int)sdr["TotalConnections"];
                     var allSales = (int)sdr["AllSales"];
                     var allPurchases = (int)sdr["AllPurchases"];
