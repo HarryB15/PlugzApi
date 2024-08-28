@@ -20,6 +20,7 @@ namespace PlugzApi.Models
         public string? payIntentCS { get; set; }
         public bool userSharingLoc { get; set; }
         public string purchaseRef { get; set; } = "";
+        public string? userName { get; set; }
         public Listings listing { get; set; } = new Listings();
         public Location location { get; set; } = new Location();
 
@@ -111,6 +112,61 @@ namespace PlugzApi.Models
                             listingId = (int)sdr["ListingId"],
                             userId = (int)sdr["ListingUserId"],
                             userName = (string)sdr["ListingUserName"],
+                            listingDesc = (string)sdr["ListingDesc"],
+                            price = (decimal)sdr["ListingPrice"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                        }
+                    };
+                    await purchase.listing.GetImages();
+                    var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
+                    purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
+                    purchases.Add(purchase);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return purchases;
+        }
+
+        public async Task<List<Purchases>> GetUsersSales(bool liveOnly)
+        {
+            List<Purchases> purchases = new List<Purchases>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUsersSales", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@liveOnly", SqlDbType.Bit).Value = liveOnly;
+                cmd.Parameters.Add("@existingPurchaseIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Purchases purchase = new Purchases()
+                    {
+                        purchaseId = (int)sdr["PurchaseId"],
+                        purchaseStatusId = (int)sdr["PurchaseStatusId"],
+                        purchaseStatus = (string)sdr["PurchaseStatus"],
+                        price = (decimal)sdr["PurchasePrice"],
+                        fee = (decimal)sdr["Fee"],
+                        purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
+                        completionDatetime = (sdr["CompletionDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletionDatetime"] : null,
+                        userSharingLoc = (bool)sdr["UserSharingLoc"],
+                        userId = (int)sdr["UserId"],
+                        userName = (string)sdr["UserName"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        },
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
                             listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],

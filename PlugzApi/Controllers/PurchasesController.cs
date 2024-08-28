@@ -28,6 +28,12 @@ namespace PlugzApi.Controllers
             var purchases = await purchase.GetUsersPurchases(liveOnly);
             return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
         }
+        [HttpPost("GetUsersSales/{liveOnly:bool}")]
+        public async Task<ActionResult> GetUsersSales(Purchases purchase, bool liveOnly)
+        {
+            var purchases = await purchase.GetUsersSales(liveOnly);
+            return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
+        }
     }
 }
 
