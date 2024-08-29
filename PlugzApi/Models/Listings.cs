@@ -184,25 +184,42 @@ namespace PlugzApi.Models
             await CommonService.Close(con, sdr);
             return listings;
         }
-        public async Task GetImages()
+        public async Task GetImages(bool firstOnly = false)
         {
             try
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
                 var hashedListingId = CommonService.HashString(listingId.ToString(), "Listings");
-                var azureImages = await azureStorageService.GetPhotos("listing-images", hashedListingId);
-                if (azureImages != null)
+                if (firstOnly)
                 {
-                    for(var i = 0; i < azureImages.Count; i++)
+                    var azureImage = await azureStorageService.GetPhoto("listing-images", hashedListingId + "/0.txt");
+                    if(azureImage != null)
                     {
                         images.Add(new Images()
                         {
-                            dataUrl = azureImages[i],
-                            id = i
+                            dataUrl = azureImage,
+                            id = 0
                         });
                     }
                 }
                 else
+                {
+                    var azureImages = await azureStorageService.GetPhotos("listing-images", hashedListingId);
+                    if (azureImages != null)
+                    {
+                        for (var i = 0; i < azureImages.Count; i++)
+                        {
+                            images.Add(new Images()
+                            {
+                                dataUrl = azureImages[i],
+                                id = i
+                            });
+                        }
+                    }
+                }
+
+
+                if (images.Count == 0)
                 {
                     error = CommonService.GetUnexpectedErrrorMsg();
                 }

@@ -15,14 +15,10 @@ namespace PlugzApi.Models
             {
                 AzureStorageService azureStorageService = new AzureStorageService();
                 var hashedUserId = CommonService.HashString(userId.ToString(), "ProfilePhotos");
-                var images = await azureStorageService.GetPhotos("profile-photos", hashedUserId);
-                if(images != null)
+                var azureImage = await azureStorageService.GetPhoto("profile-photos", hashedUserId + ".txt");
+                if(azureImage != null)
                 {
-                    image = (images.Count > 0) ? images[0] : "";
-                }
-                else
-                {
-                    error = CommonService.GetUnexpectedErrrorMsg();
+                    image = azureImage;
                 }
             }
             catch (Exception ex)

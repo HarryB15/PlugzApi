@@ -120,7 +120,7 @@ namespace PlugzApi.Models
                             expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
                         }
                     };
-                    await purchase.listing.GetImages();
+                    await purchase.listing.GetImages(true);
                     var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
                     purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
                     purchases.Add(purchase);
@@ -176,7 +176,7 @@ namespace PlugzApi.Models
                             expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
                         }
                     };
-                    await purchase.listing.GetImages();
+                    await purchase.listing.GetImages(true);
                     var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
                     purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
                     purchases.Add(purchase);

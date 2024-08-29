@@ -13,8 +13,7 @@ namespace PlugzApi.Services
             List<string> images = new List<string>();
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
+                var containerClient = GetBlobContainer(blobContainer);
                 var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 BlobClient blobClient;
                 Azure.Response<BlobDownloadInfo> response;
@@ -43,13 +42,39 @@ namespace PlugzApi.Services
             }
             return images;
         }
+        public async Task<string?> GetPhoto(string blobContainer, string blobName)
+        {
+            string? image = null;
+            try
+            {
+                var containerClient = GetBlobContainer(blobContainer);
+                var blob = containerClient.GetBlobClient(blobName);
+                Azure.Response<BlobDownloadInfo> response;
+                if (blob.Exists())
+                {
+                    response = await blob.DownloadAsync();
+                    using (var streamReader = new StreamReader(response.Value.Content))
+                    {
+                        while (!streamReader.EndOfStream)
+                        {
+                            image += await streamReader.ReadLineAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                return null;
+            }
+            return image;
+        }
         public async Task<bool> StoreImage(string image, string blobContainer, string path)
         {
             var success = false;
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
+                var containerClient = GetBlobContainer(blobContainer);
                 await containerClient.CreateIfNotExistsAsync();
                 BlobClient blobClient = containerClient.GetBlobClient(path);
                 using MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(image));
@@ -67,8 +92,7 @@ namespace PlugzApi.Services
         {
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
+                var containerClient = GetBlobContainer(blobContainer);
                 var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 foreach (var blob in blobs)
                 {
@@ -84,8 +108,7 @@ namespace PlugzApi.Services
         {
             try
             {
-                var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
-                var containerClient = blobServiceClient.GetBlobContainerClient("listing-images");
+                var containerClient = GetBlobContainer("listing-images");
                 var blobs = containerClient.GetBlobs(BlobTraits.None, BlobStates.None, prefix: prefix);
                 foreach (var blob in blobs)
                 {
@@ -108,6 +131,11 @@ namespace PlugzApi.Services
             {
                 CommonService.Log(ex);
             }
+        }
+        private BlobContainerClient GetBlobContainer(string containerName)
+        {
+            var blobServiceClient = CommonService.Instance.GetBlobServiceClient();
+            return blobServiceClient.GetBlobContainerClient(containerName);
         }
     }
 }
