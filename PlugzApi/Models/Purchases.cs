@@ -21,6 +21,7 @@ namespace PlugzApi.Models
         public bool userSharingLoc { get; set; }
         public string purchaseRef { get; set; } = "";
         public string? userName { get; set; }
+        public bool isPurchase { get; set; }
         public Listings listing { get; set; } = new Listings();
         public Location location { get; set; } = new Location();
 
@@ -102,6 +103,7 @@ namespace PlugzApi.Models
                         purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
                         completionDatetime = (sdr["CompletionDatetime"] != DBNull.Value) ? (DateTime)sdr["CompletionDatetime"] : null,
                         userSharingLoc = (bool)sdr["UserSharingLoc"],
+                        isPurchase = true,
                         location = new Location()
                         {
                             lat = (decimal)sdr["Lat"],
@@ -159,6 +161,7 @@ namespace PlugzApi.Models
                         userSharingLoc = (bool)sdr["UserSharingLoc"],
                         userId = (int)sdr["UserId"],
                         userName = (string)sdr["UserName"],
+                        isPurchase = false,
                         location = new Location()
                         {
                             lat = (decimal)sdr["Lat"],
