@@ -48,6 +48,30 @@ namespace PlugzApi.Models
                     {
                         payIntentCS = paymentIntent.ClientSecret;
                         purchaseId = (int)sdr["PurchaseId"];
+                        purchaseStatusId = (int)sdr["PurchaseStatusId"];
+                        purchaseStatus = (string)sdr["PurchaseStatus"];
+                        purchaseDatetime = (DateTime)sdr["PurchaseDatetime"];
+                        completionDatetime = null;
+                        userSharingLoc = (bool)sdr["UserSharingLoc"];
+                        isPurchase = true;
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        };
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
+                            userId = (int)sdr["ListingUserId"],
+                            userName = (string)sdr["ListingUserName"],
+                            listingDesc = (string)sdr["ListingDesc"],
+                            price = (decimal)sdr["ListingPrice"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                        };
+
+                        var hashedId = CommonService.HashString(purchaseId.ToString(), "purchaseRef");
+                        purchaseRef = hashedId.Substring(0, 8).ToUpper();
                     }
                 }
                 else
