@@ -158,6 +158,46 @@ namespace PlugzApi.Models
             await CommonService.Close(con, sdr);
             return purchases;
         }
+        public async Task<List<Purchases>> GetUsersPurchasesBasic()
+        {
+            List<Purchases> purchases = new List<Purchases>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUsersPurchasesBasic", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Purchases purchase = new Purchases()
+                    {
+                        purchaseId = (int)sdr["PurchaseId"],
+                        purchaseStatusId = (int)sdr["PurchaseStatusId"],
+                        purchaseStatus = (string)sdr["PurchaseStatus"],
+                        price = (decimal)sdr["PurchasePrice"],
+                        fee = (decimal)sdr["Fee"],
+                        purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
+                        isPurchase = true,
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
+                            listingDesc = (string)sdr["ListingDesc"]
+                        }
+                    };
+                    var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
+                    purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
+                    purchases.Add(purchase);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return purchases;
+        }
 
         public async Task<List<Purchases>> GetUsersSales(bool liveOnly)
         {
@@ -201,6 +241,48 @@ namespace PlugzApi.Models
                         }
                     };
                     await purchase.listing.GetImages(true);
+                    var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
+                    purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
+                    purchases.Add(purchase);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return purchases;
+        }
+        public async Task<List<Purchases>> GetUsersSalesBasic()
+        {
+            List<Purchases> purchases = new List<Purchases>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUsersSalesBasic", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    Purchases purchase = new Purchases()
+                    {
+                        purchaseId = (int)sdr["PurchaseId"],
+                        purchaseStatusId = (int)sdr["PurchaseStatusId"],
+                        purchaseStatus = (string)sdr["PurchaseStatus"],
+                        price = (decimal)sdr["PurchasePrice"],
+                        fee = (decimal)sdr["Fee"],
+                        purchaseDatetime = (DateTime)sdr["PurchaseDatetime"],
+                        userId = (int)sdr["UserId"],
+                        userName = (string)sdr["UserName"],
+                        isPurchase = false,
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
+                            listingDesc = (string)sdr["ListingDesc"]
+                        }
+                    };
                     var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
                     purchase.purchaseRef = hashedId.Substring(0, 8).ToUpper();
                     purchases.Add(purchase);

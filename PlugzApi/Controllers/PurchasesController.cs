@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 using PlugzApi.Models;
 
 namespace PlugzApi.Controllers
@@ -32,6 +33,22 @@ namespace PlugzApi.Controllers
         public async Task<ActionResult> GetUsersSales(Purchases purchase, bool liveOnly)
         {
             var purchases = await purchase.GetUsersSales(liveOnly);
+            return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
+        }
+        [HttpGet("PurchasesBasic/{userId:int}")]
+        public async Task<ActionResult> GetUsersPurchasesBasic(int userId)
+        {
+            Purchases purchase = new Purchases();
+            purchase.userId = userId;
+            var purchases = await purchase.GetUsersPurchasesBasic();
+            return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
+        }
+        [HttpGet("SalesBasic/{userId:int}")]
+        public async Task<ActionResult> GetUsersSalesBasic(int userId)
+        {
+            Purchases purchase = new Purchases();
+            purchase.userId = userId;
+            var purchases = await purchase.GetUsersSalesBasic();
             return (purchase.error == null) ? Ok(purchases) : StatusCode(purchase.error.errorCode, purchase.error);
         }
     }
