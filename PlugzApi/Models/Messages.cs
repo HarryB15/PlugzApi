@@ -22,7 +22,6 @@ namespace PlugzApi.Models
         public Offer? offer { get; set; }
         public async Task InsMessage()
         {
-
             try
             {
                 con = await CommonService.Instance.Open();
@@ -32,6 +31,26 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@messageText", SqlDbType.NVarChar).Value = messageText;
                 cmd.Parameters.Add("@senderUserId", SqlDbType.Int).Value = senderUserId;
                 cmd.Parameters.Add("@receiverUserId", SqlDbType.Int).Value = receiverUserId;
+                cmd.Parameters.Add("@extId", SqlDbType.Int).Value = extId;
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+        }
+        public async Task InsMessageMultiple()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("InsMessageMultiple", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@messageTypeId", SqlDbType.TinyInt).Value = messageTypeId;
+                cmd.Parameters.Add("@senderUserId", SqlDbType.Int).Value = senderUserId;
+                cmd.Parameters.Add("@receiverUserIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 cmd.Parameters.Add("@extId", SqlDbType.Int).Value = extId;
                 await cmd.ExecuteNonQueryAsync();
             }
