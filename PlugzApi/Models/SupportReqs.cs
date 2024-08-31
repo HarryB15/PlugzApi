@@ -60,7 +60,8 @@ namespace PlugzApi.Models
         {
             try
             {
-                extId = (supportReqTypeId == 1 || supportReqTypeId == 2) ? extId : null;
+                var extIdSupportReqType = new List<int> { 1, 2, 4 };
+                extId = extIdSupportReqType.Contains(supportReqTypeId) ? extId : null;
                 con = await CommonService.Instance.Open();
                 cmd = new SqlCommand("InsSupportRequests", con);
                 cmd.CommandType = CommandType.StoredProcedure;
