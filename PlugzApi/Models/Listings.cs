@@ -20,6 +20,8 @@ namespace PlugzApi.Models
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
         public string pickUpDropOff { get; set; } = "";
+        public string? pickupAddress { get; set; }
+        public Location? pickupLocation { get; set; }
         public Location location { get; set; } = new Location();
         public List<Images> images { get; set; } = new List<Images>();
         public List<Keywords> keywords { get; set; } = new List<Keywords>();
@@ -39,6 +41,12 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
                 cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
+                if((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation != null)
+                {
+                    cmd.Parameters.Add("@pickupAddress", SqlDbType.VarChar).Value = pickupAddress;
+                    cmd.Parameters.Add("@pickupLat", SqlDbType.Decimal).Value = pickupLocation.lat;
+                    cmd.Parameters.Add("@pickupLng", SqlDbType.Decimal).Value = pickupLocation.lng;
+                }
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
                 {
