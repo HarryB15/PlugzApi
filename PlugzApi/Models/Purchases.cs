@@ -67,7 +67,14 @@ namespace PlugzApi.Models
                             listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                            pickUpDropOff = (string)sdr["PickUpDropOff"],
+                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
+                            pickupLocation = new Location()
+                            {
+                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
+                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
+                            }
                         };
 
                         var hashedId = CommonService.HashString(purchaseId.ToString(), "purchaseRef");
@@ -141,7 +148,14 @@ namespace PlugzApi.Models
                             listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                            pickUpDropOff = (string)sdr["PickUpDropOff"],
+                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
+                            pickupLocation = new Location()
+                            {
+                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
+                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
+                            }
                         }
                     };
                     await purchase.listing.GetImages(true);
@@ -237,7 +251,14 @@ namespace PlugzApi.Models
                             listingDesc = (string)sdr["ListingDesc"],
                             price = (decimal)sdr["ListingPrice"],
                             createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                            pickUpDropOff = (string)sdr["PickUpDropOff"],
+                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
+                            pickupLocation = new Location()
+                            {
+                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
+                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
+                            }
                         }
                     };
                     await purchase.listing.GetImages(true);

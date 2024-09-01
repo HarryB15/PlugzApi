@@ -50,7 +50,14 @@ namespace PlugzApi.Models
                         },
                         createdDatetime = (DateTime)sdr["CreatedDatetime"],
                         expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"]
+                        userName = (string)sdr["UserName"],
+                        pickUpDropOff = (string)sdr["PickUpDropOff"],
+                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
+                        pickupLocation = new Location()
+                        {
+                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
+                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
+                        }
                     };
                     listings.Add(listing);
                 }
@@ -137,6 +144,13 @@ namespace PlugzApi.Models
                             lat = (decimal)sdr["Lat"],
                             lng = (decimal)sdr["Lng"],
                         },
+                        pickUpDropOff = (string)sdr["PickUpDropOff"],
+                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
+                        pickupLocation = new Location()
+                        {
+                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
+                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
+                        }
                     };
                     listings.Add(listing);
                 }
