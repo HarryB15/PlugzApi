@@ -11,6 +11,7 @@ namespace PlugzApi.Models
 	{
         public decimal? lat { get; set; }
         public decimal? lng { get; set; }
+        public string address { get; set; } = "";
         public async Task GetUsersLocation()
         {
             try
@@ -32,6 +33,16 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+        }
+        public List<Location>? SearchLocation()
+        {
+            AzureMapsService azureMapsService = new AzureMapsService();
+            var locations = azureMapsService.SearchAddress(address);
+            if (locations == null)
+            {
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            return locations;
         }
     }
 }

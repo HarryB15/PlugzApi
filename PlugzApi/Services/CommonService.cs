@@ -8,6 +8,8 @@ using PlugzApi.Models;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using System.Text;
+using Azure.Maps.Search;
+using Azure;
 
 namespace PlugzApi.Services
 {
@@ -120,6 +122,11 @@ namespace PlugzApi.Services
         public BlobServiceClient GetBlobServiceClient()
         {
             return new BlobServiceClient(new Uri(_configuration["Azure:Storage"]!), new DefaultAzureCredential());
+        }
+        public MapsSearchClient GetMapsClient()
+        {
+            var credential = new AzureKeyCredential(_configuration["Azure:Maps"]!);
+            return new MapsSearchClient(credential);
         }
         public static string HashString(string message, string key)
         {
