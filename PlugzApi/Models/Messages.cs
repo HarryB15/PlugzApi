@@ -135,7 +135,14 @@ namespace PlugzApi.Models
                             listingId = (int)sdr["OfferListingId"],
                             offerValue = (decimal)sdr["OfferValue"],
                             responseType = (sdr["ResponseType"] != DBNull.Value) ? (string)sdr["ResponseType"] : null,
-                            oriOfferId = (sdr["OriOfferId"] != DBNull.Value) ? (int)sdr["OriOfferId"] : null
+                            oriOfferId = (sdr["OriOfferId"] != DBNull.Value) ? (int)sdr["OriOfferId"] : null,
+                            pickUpDropOff = (string)sdr["OfferPickUpDropOff"],
+                            pickupAddress = (sdr["OfferPickupAddress"] != DBNull.Value) ? (string)sdr["OfferPickupAddress"] : null,
+                            pickupLocation = new Location()
+                            {
+                                lat = (sdr["OfferPickupLat"] != DBNull.Value) ? (decimal)sdr["OfferPickupLat"] : null,
+                                lng = (sdr["OfferPickupLng"] != DBNull.Value) ? (decimal)sdr["OfferPickupLng"] : null
+                            }
                         };
 
                         var existingListing = messages.Where(m => m.offer != null).Select(m => m.offer!.listing)
