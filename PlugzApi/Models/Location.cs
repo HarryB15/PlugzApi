@@ -9,6 +9,7 @@ namespace PlugzApi.Models
 {
 	public class Location: Base
 	{
+        public int locationId { get; set; }
         public decimal? lat { get; set; }
         public decimal? lng { get; set; }
         public string address { get; set; } = "";
@@ -43,6 +44,28 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             return locations;
+        }
+        public async Task InsLocations(SqlConnection con)
+        {
+            try
+            {
+                cmd = new SqlCommand("InsLocations", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@address", SqlDbType.VarChar).Value = address;
+                cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = lat;
+                cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = lng;
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    locationId = (int)sdr["LocationId"];
+                }
+                sdr.Close();
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
         }
     }
 }

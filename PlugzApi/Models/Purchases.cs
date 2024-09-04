@@ -22,8 +22,10 @@ namespace PlugzApi.Models
         public string purchaseRef { get; set; } = "";
         public string? userName { get; set; }
         public bool isPurchase { get; set; }
+        public string pickupDropoff { get; set; } = "";
         public Listings listing { get; set; } = new Listings();
         public Location location { get; set; } = new Location();
+        public Location? deliveryLocation { get; set; }
 
         public async Task InsPurchases()
         {
@@ -35,6 +37,19 @@ namespace PlugzApi.Models
                 if (paymentIntent != null)
                 {
                     con = await CommonService.Instance.Open();
+                    if(pickupDropoff == "D" && deliveryLocation == null)
+                    {
+                        throw new Exception("Delivery address not entered");
+                    }
+                    else if(pickupDropoff == "D" && deliveryLocation != null)
+                    {
+                        await deliveryLocation.InsLocations(con);
+                        if(deliveryLocation.locationId == 0)
+                        {
+                            throw new Exception("Error inserting delivery address");
+                        }
+                    }
+
                     cmd = new SqlCommand("InsPurchases", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
@@ -43,6 +58,8 @@ namespace PlugzApi.Models
                     cmd.Parameters.Add("@price", SqlDbType.Decimal).Value = price;
                     cmd.Parameters.Add("@fee", SqlDbType.Decimal).Value = fee;
                     cmd.Parameters.Add("@payIntentId", SqlDbType.VarChar).Value = paymentIntent.Id;
+                    cmd.Parameters.Add("@pickupDropoff", SqlDbType.Char).Value = pickupDropoff;
+                    cmd.Parameters.Add("@deliveryAddressId", SqlDbType.Int).Value = deliveryLocation != null ? deliveryLocation.locationId : null;
                     sdr = await cmd.ExecuteReaderAsync();
                     if (sdr.Read())
                     {
