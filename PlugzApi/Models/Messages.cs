@@ -116,12 +116,13 @@ namespace PlugzApi.Models
                                 createdDatetime = (DateTime)sdr["ListingCreated"],
                                 expiryDatetime = (sdr["ListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null,
                                 pickUpDropOff = (string)sdr["PickUpDropOff"],
-                                pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                                pickupLocation = new Location()
+                                pickupLocation = (sdr["PickupLocationId"] == DBNull.Value) ? null : new Location()
                                 {
-                                    lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                                    lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                                }
+                                    locationId = (int)sdr["PickupLocationId"],
+                                    address = (string)sdr["PickupAddress"],
+                                    lat = (decimal)sdr["PickupLat"],
+                                    lng = (decimal)sdr["PickupLng"],
+                                },
                             };
                             await message.listing.GetImages();
                         }
@@ -162,12 +163,13 @@ namespace PlugzApi.Models
                                 createdDatetime = (DateTime)sdr["OfferListingCreated"],
                                 expiryDatetime = (sdr["OfferListingExpiry"] != DBNull.Value) ? (DateTime)sdr["ListingExpiry"] : null,
                                 pickUpDropOff = (string)sdr["OfferPickUpDropOff"],
-                                pickupAddress = (sdr["OfferPickupAddress"] != DBNull.Value) ? (string)sdr["OfferPickupAddress"] : null,
-                                pickupLocation = new Location()
+                                pickupLocation = (sdr["OfferListingPickupLocationId"] == DBNull.Value) ? null : new Location()
                                 {
-                                    lat = (sdr["OfferPickupLat"] != DBNull.Value) ? (decimal)sdr["OfferPickupLat"] : null,
-                                    lng = (sdr["OfferPickupLng"] != DBNull.Value) ? (decimal)sdr["OfferPickupLng"] : null
-                                }
+                                    locationId = (int)sdr["OfferListingPickupLocationId"],
+                                    address = (string)sdr["OfferListingPickupAddress"],
+                                    lat = (decimal)sdr["OfferListingPickupLat"],
+                                    lng = (decimal)sdr["OfferListingPickupLng"],
+                                },
                             };
                             await message.offer.listing.GetImages();
                         }

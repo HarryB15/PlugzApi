@@ -77,23 +77,7 @@ namespace PlugzApi.Models
                             lat = (decimal)sdr["Lat"],
                             lng = (decimal)sdr["Lng"],
                         };
-                        listing = new Listings()
-                        {
-                            listingId = (int)sdr["ListingId"],
-                            userId = (int)sdr["ListingUserId"],
-                            userName = (string)sdr["ListingUserName"],
-                            listingDesc = (string)sdr["ListingDesc"],
-                            price = (decimal)sdr["ListingPrice"],
-                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                            pickUpDropOff = (string)sdr["PickUpDropOff"],
-                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                            pickupLocation = new Location()
-                            {
-                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                            }
-                        };
+                        listing = ReadPurchaseListing(sdr);
 
                         var hashedId = CommonService.HashString(purchaseId.ToString(), "purchaseRef");
                         purchaseRef = hashedId.Substring(0, 8).ToUpper();
@@ -110,6 +94,28 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+        }
+        public static Listings ReadPurchaseListing(SqlDataReader sdr, int userId = -1)
+        {
+            return new Listings()
+            {
+                listingId = (int)sdr["ListingId"],
+                userId = (userId == -1) ? (int)sdr["ListingUserId"] : userId,
+                userName = (userId == -1) ? (string)sdr["ListingUserName"] : "",
+                listingDesc = (string)sdr["ListingDesc"],
+                price = (decimal)sdr["ListingPrice"],
+                createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                pickUpDropOff = (string)sdr["PickUpDropOff"],
+                pickupLocation = (sdr["PickupLocationId"] == DBNull.Value) ? null : new Location()
+                {
+                    locationId = (int)sdr["PickupLocationId"],
+                    address = (string)sdr["PickupAddress"],
+                    lat = (decimal)sdr["PickupLat"],
+                    lng = (decimal)sdr["PickupLng"],
+                },
+            };
+
         }
         public async Task DeletePurchases()
         {
@@ -158,23 +164,7 @@ namespace PlugzApi.Models
                             lat = (decimal)sdr["Lat"],
                             lng = (decimal)sdr["Lng"],
                         },
-                        listing = new Listings()
-                        {
-                            listingId = (int)sdr["ListingId"],
-                            userId = (int)sdr["ListingUserId"],
-                            userName = (string)sdr["ListingUserName"],
-                            listingDesc = (string)sdr["ListingDesc"],
-                            price = (decimal)sdr["ListingPrice"],
-                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                            pickUpDropOff = (string)sdr["PickUpDropOff"],
-                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                            pickupLocation = new Location()
-                            {
-                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                            }
-                        }
+                        listing = ReadPurchaseListing(sdr)
                     };
                     await purchase.listing.GetImages(true);
                     var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");
@@ -263,21 +253,7 @@ namespace PlugzApi.Models
                             lat = (decimal)sdr["Lat"],
                             lng = (decimal)sdr["Lng"],
                         },
-                        listing = new Listings()
-                        {
-                            listingId = (int)sdr["ListingId"],
-                            listingDesc = (string)sdr["ListingDesc"],
-                            price = (decimal)sdr["ListingPrice"],
-                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                            pickUpDropOff = (string)sdr["PickUpDropOff"],
-                            pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                            pickupLocation = new Location()
-                            {
-                                lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                                lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                            }
-                        }
+                        listing = ReadPurchaseListing(sdr, userId)
                     };
                     await purchase.listing.GetImages(true);
                     var hashedId = CommonService.HashString(purchase.purchaseId.ToString(), "purchaseRef");

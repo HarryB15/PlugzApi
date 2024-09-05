@@ -20,7 +20,6 @@ namespace PlugzApi.Models
         public int expiryHours { get; set; }
         public string userName { get; set; } = "";
         public string pickUpDropOff { get; set; } = "";
-        public string? pickupAddress { get; set; }
         public Location? pickupLocation { get; set; }
         public Location location { get; set; } = new Location();
         public List<Images> images { get; set; } = new List<Images>();
@@ -31,6 +30,19 @@ namespace PlugzApi.Models
             try
             {
                 con = await CommonService.Instance.Open();
+                if ((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation == null)
+                {
+                    throw new Exception("Pickup address not entered");
+                }
+                else if ((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation != null)
+                {
+                    await pickupLocation.InsLocations(con);
+                    if (pickupLocation.locationId == 0)
+                    {
+                        throw new Exception("Error inserting delivery address");
+                    }
+                }
+
                 cmd = new SqlCommand("InsListings", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
@@ -43,9 +55,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
                 if((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation != null)
                 {
-                    cmd.Parameters.Add("@pickupAddress", SqlDbType.VarChar).Value = pickupAddress;
-                    cmd.Parameters.Add("@pickupLat", SqlDbType.Decimal).Value = pickupLocation.lat;
-                    cmd.Parameters.Add("@pickupLng", SqlDbType.Decimal).Value = pickupLocation.lng;
+                    cmd.Parameters.Add("@pickupLocationId", SqlDbType.Int).Value = pickupLocation.locationId;
                 }
                 sdr = await cmd.ExecuteReaderAsync();
                 if (sdr.Read())
@@ -162,29 +172,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@incExpired", SqlDbType.Bit).Value = incExpired;
                 cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
-                while (sdr.Read())
-                {
-                    Listings listing = new Listings()
-                    {
-                        listingId = (int)sdr["ListingId"],
-                        userId = userId,
-                        listingDesc = (string)sdr["ListingDesc"],
-                        price = (decimal)sdr["Price"],
-                        minUserRatings = (byte)sdr["MinUserRatings"],
-                        minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null,
-                        isPublic = (bool)sdr["IsPublic"],
-                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        pickUpDropOff = (string)sdr["PickUpDropOff"],
-                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                        pickupLocation = new Location()
-                        {
-                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                        }
-                    };
-                    listings.Add(listing);
-                }
+                listings = ReadListings(sdr, userId);
                 foreach(var listing in listings)
                 {
                     await listing.GetImages();
@@ -196,6 +184,40 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+            return listings;
+        }
+        public static List<Listings> ReadListings(SqlDataReader sdr, int userId = -1)
+        {
+            List<Listings> listings = new List<Listings>();
+            while (sdr.Read())
+            {
+                listings.Add(new Listings()
+                {
+                    listingId = (int)sdr["ListingId"],
+                    userId = (userId == -1) ? (int)sdr["UserId"] : userId,
+                    userName = (userId == -1) ? (string)sdr["UserName"] : "",
+                    listingDesc = (string)sdr["ListingDesc"],
+                    price = (decimal)sdr["Price"],
+                    minUserRatings = (byte)sdr["MinUserRatings"],
+                    minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null,
+                    isPublic = (bool)sdr["IsPublic"],
+                    createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                    expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                    pickUpDropOff = (string)sdr["PickUpDropOff"],
+                    pickupLocation = (sdr["PickupLocationId"] == DBNull.Value) ? null : new Location()
+                    {
+                        locationId = (int)sdr["PickupLocationId"],
+                        address = (string)sdr["PickupAddress"],
+                        lat = (decimal)sdr["PickupLat"],
+                        lng = (decimal)sdr["PickupLng"],
+                    },
+                    location = new Location()
+                    {
+                        lat = (userId == -1) ? (decimal)sdr["Lat"] : null,
+                        lng = (userId == -1) ? (decimal)sdr["Lng"] : null,
+                    },
+                }) ;
+            }
             return listings;
         }
         public async Task GetImages(bool firstOnly = false)
@@ -269,29 +291,7 @@ namespace PlugzApi.Models
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
-                    Listings listing = new Listings()
-                    {
-                        listingId = (int)sdr["ListingId"],
-                        userId = (int)sdr["UserId"],
-                        listingDesc = (string)sdr["ListingDesc"],
-                        price = (decimal)sdr["Price"],
-                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"],
-                        location = new Location()
-                        {
-                            lat = (decimal)sdr["Lat"],
-                            lng = (decimal)sdr["Lng"],
-                        },
-                        pickUpDropOff = (string)sdr["PickUpDropOff"],
-                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                        pickupLocation = new Location()
-                        {
-                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                        }
-                    };
-                    listings.Add(listing);
+                    listings = ReadListings(sdr);
                 }
                 foreach (var listing in listings)
                 {

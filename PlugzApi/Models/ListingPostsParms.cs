@@ -35,32 +35,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
                 cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
-                while (sdr.Read())
-                {
-                    Listings listing = new Listings()
-                    {
-                        listingId = (int)sdr["ListingId"],
-                        userId = (int)sdr["UserId"],
-                        listingDesc = (string)sdr["ListingDesc"],
-                        price = (decimal)sdr["Price"],
-                        location = new Location()
-                        {
-                            lat = (decimal)sdr["Lat"],
-                            lng = (decimal)sdr["Lng"],
-                        },
-                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"],
-                        pickUpDropOff = (string)sdr["PickUpDropOff"],
-                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                        pickupLocation = new Location()
-                        {
-                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                        }
-                    };
-                    listings.Add(listing);
-                }
+                listings = Listings.ReadListings(sdr);
                 foreach (var listing in listings)
                 {
                     await listing.GetImages();
@@ -128,32 +103,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@lat", SqlDbType.Decimal).Value = location.lat;
                 cmd.Parameters.Add("@lng", SqlDbType.Decimal).Value = location.lng;
                 sdr = await cmd.ExecuteReaderAsync();
-                while (sdr.Read())
-                {
-                    Listings listing = new Listings()
-                    {
-                        listingId = (int)sdr["ListingId"],
-                        userId = (int)sdr["UserId"],
-                        listingDesc = (string)sdr["ListingDesc"],
-                        price = (decimal)sdr["Price"],
-                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
-                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
-                        userName = (string)sdr["UserName"],
-                        location = new Location()
-                        {
-                            lat = (decimal)sdr["Lat"],
-                            lng = (decimal)sdr["Lng"],
-                        },
-                        pickUpDropOff = (string)sdr["PickUpDropOff"],
-                        pickupAddress = (sdr["PickupAddress"] != DBNull.Value) ? (string)sdr["PickupAddress"] : null,
-                        pickupLocation = new Location()
-                        {
-                            lat = (sdr["PickupLat"] != DBNull.Value) ? (decimal)sdr["PickupLat"] : null,
-                            lng = (sdr["PickupLng"] != DBNull.Value) ? (decimal)sdr["PickupLng"] : null
-                        }
-                    };
-                    listings.Add(listing);
-                }
+                listings = Listings.ReadListings(sdr);
                 foreach (var listing in listings)
                 {
                     await listing.GetImages();
