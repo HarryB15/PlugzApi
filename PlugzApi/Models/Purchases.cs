@@ -32,8 +32,9 @@ namespace PlugzApi.Models
             try
             {
                 fee = (price < 5) ? (decimal)0.5 : price * (decimal)0.1;
+                var charge = (long)((fee * 100) + (price * 100));
                 StripeService stripe = new StripeService();
-                var paymentIntent = stripe.GetPaymentIntent((long)(fee + price) * 100);
+                var paymentIntent = stripe.GetPaymentIntent(charge);
                 if (paymentIntent != null)
                 {
                     con = await CommonService.Instance.Open();
