@@ -311,6 +311,19 @@ namespace PlugzApi.Models
             try
             {
                 con = await CommonService.Instance.Open();
+                if ((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation == null)
+                {
+                    throw new Exception("Pickup address not entered");
+                }
+                else if ((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation != null)
+                {
+                    await pickupLocation.InsLocations(con);
+                    if (pickupLocation.locationId == 0)
+                    {
+                        throw new Exception("Error inserting delivery address");
+                    }
+                }
+
                 cmd = new SqlCommand("UpdListing", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
@@ -321,6 +334,11 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@isPublic", SqlDbType.Bit).Value = isPublic;
                 cmd.Parameters.Add("@expiryHours", SqlDbType.Int).Value = expiryHours;
                 cmd.Parameters.Add("@pickUpDropOff", SqlDbType.Char).Value = pickUpDropOff;
+                if ((pickUpDropOff == "P" || pickUpDropOff == "B") && pickupLocation != null)
+                {
+                    cmd.Parameters.Add("@pickupLocationId", SqlDbType.Int).Value = pickupLocation.locationId;
+                }
+
                 await cmd.ExecuteNonQueryAsync();
                 if (keywords.Count > 0)
                 {
