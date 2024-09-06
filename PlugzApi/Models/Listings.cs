@@ -360,5 +360,28 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
         }
+        public async Task<bool> IsListingEditable()
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("IsListingEditable", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                cmd.Parameters.Add("@editable", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                await cmd.ExecuteNonQueryAsync();
+                return (bool)cmd.Parameters["@editable"].Value;
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+                return false;
+            }
+            finally
+            {
+                await CommonService.Close(con, sdr);
+            }
+        }
     }
 }

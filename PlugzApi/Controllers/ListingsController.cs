@@ -40,6 +40,14 @@ namespace PlugzApi.Controllers
             await listing.DeleteListing();
             return (listing.error == null) ? Ok() : StatusCode(listing.error.errorCode, listing.error);
         }
+        [HttpGet("IsEditable/{listingId:int}")]
+        public async Task<ActionResult> IsListingEditable(int listingId)
+        {
+            Listings listing = new Listings();
+            listing.listingId = listingId;
+            var editable = await listing.IsListingEditable();
+            return (listing.error == null) ? Ok(editable) : StatusCode(listing.error.errorCode, listing.error);
+        }
     }
 }
 
