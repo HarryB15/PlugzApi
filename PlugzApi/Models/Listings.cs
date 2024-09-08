@@ -74,9 +74,8 @@ namespace PlugzApi.Models
                         var contacts = await contactObj.GetUsersContactsBasic();
 
                         var messages = new Messages();
-                        messages.messageTypeId = 3;
                         messages.senderUserId = userId;
-                        messages.extId = listingId;
+                        messages.listingId = listingId;
                         foreach (var contact in contacts.Where(c => c.isConnected))
                         {
                             messages.receiverUserId = contact.contactUser.userId;

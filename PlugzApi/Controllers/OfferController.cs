@@ -20,6 +20,12 @@ namespace PlugzApi.Controllers
             await offer.UpdOfferResponse();
             return (offer.error == null) ? Ok() : StatusCode(offer.error.errorCode, offer.error);
         }
+        [HttpPost("GetUsersOffers")]
+        public async Task<ActionResult> GetUsersOffers(Offer offer)
+        {
+            var offers = await offer.GetUsersOffers();
+            return (offer.error == null) ? Ok(offers) : StatusCode(offer.error.errorCode, offer.error);
+        }
     }
 }
 

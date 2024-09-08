@@ -21,10 +21,13 @@ namespace PlugzApi.Controllers
             await message.InsMessageMultiple();
             return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpPost("{contactUserId:int}")]
-        public async Task<ActionResult> GetMessages(Messages message, int contactUserId)
+        [HttpGet("{userId:int}/{contactUserId:int}/{listingId:int}")]
+        public async Task<ActionResult> GetListingMessages(int userId, int contactUserId, int listingId)
         {
-            var messages = await message.GetMessages(contactUserId);
+            Messages message = new Messages();
+            message.userId = userId;
+            message.listingId = listingId;
+            var messages = await message.GetListingMessages(contactUserId);
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
     }
