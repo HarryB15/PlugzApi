@@ -114,7 +114,7 @@ namespace PlugzApi.Models
                     foreach(var offer in offers)
                     {
                         offer.listing.listingId = offer.listingId;
-                        await listing.GetImages(true);
+                        await offer.listing.GetImages(true);
                     }
                 }
             }
