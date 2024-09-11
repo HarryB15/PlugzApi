@@ -96,26 +96,11 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
 
-                while (sdr.Read())
+                offers = ReadOffers(sdr);
+                foreach (var offer in offers)
                 {
-                    offers.Add(new Offer()
-                    {
-                        offerId = (int)sdr["OfferId"],
-                        listingId = (int)sdr["ListingId"],
-                        userId = (int)sdr["UserId"],
-                        receiverUserId = (int)sdr["ReceiverUserId"],
-                        offerValue = (decimal)sdr["OfferValue"],
-                        responseType = sdr["ResponseType"] != DBNull.Value ? (string)sdr["ResponseType"] : null,
-                        offerText = sdr["OfferText"] != DBNull.Value ? (string)sdr["OfferText"] : null,
-                        sentDatetime = (DateTime)sdr["SentDatetime"],
-                        userName = (string)sdr["UserName"],
-                        userIsSender = (userId == (int)sdr["UserId"])   
-                    });
-                    foreach(var offer in offers)
-                    {
-                        offer.listing.listingId = offer.listingId;
-                        await offer.listing.GetImages(true);
-                    }
+                    offer.listing.listingId = offer.listingId;
+                    await offer.listing.GetImages(true);
                 }
             }
             catch (Exception ex)
@@ -124,6 +109,55 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+            return offers;
+        }
+        public async Task<List<Offer>> SearchOffers(string searchValue)
+        {
+            var offers = new List<Offer>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("SearchOffers", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@searchValue", SqlDbType.VarChar).Value = searchValue;
+                cmd.Parameters.Add("@existingListingIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
+                sdr = await cmd.ExecuteReaderAsync();
+
+                offers = ReadOffers(sdr);
+                foreach (var offer in offers)
+                {
+                    offer.listing.listingId = offer.listingId;
+                    await offer.listing.GetImages(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return offers;
+        }
+        private List<Offer> ReadOffers(SqlDataReader sdr)
+        {
+            var offers = new List<Offer>();
+            while (sdr.Read())
+            {
+                offers.Add(new Offer()
+                {
+                    offerId = (int)sdr["OfferId"],
+                    listingId = (int)sdr["ListingId"],
+                    userId = (int)sdr["UserId"],
+                    receiverUserId = (int)sdr["ReceiverUserId"],
+                    offerValue = (decimal)sdr["OfferValue"],
+                    responseType = sdr["ResponseType"] != DBNull.Value ? (string)sdr["ResponseType"] : null,
+                    offerText = sdr["OfferText"] != DBNull.Value ? (string)sdr["OfferText"] : null,
+                    sentDatetime = (DateTime)sdr["SentDatetime"],
+                    userName = (string)sdr["UserName"],
+                    userIsSender = (userId == (int)sdr["UserId"])
+                });
+            }
             return offers;
         }
     }

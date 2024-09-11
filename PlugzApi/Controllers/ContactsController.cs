@@ -15,6 +15,12 @@ namespace PlugzApi.Controllers
             var contacts = await contact.GetUsersContacts();
             return (contact.error == null) ? Ok(contacts) : StatusCode(contact.error.errorCode, contact.error);
         }
+        [HttpPost("Search/{searchValue}")]
+        public async Task<ActionResult> SearchContacts(Contacts contact, string searchValue)
+        {
+            var contacts = await contact.SearchContacts(searchValue);
+            return (contact.error == null) ? Ok(contacts) : StatusCode(contact.error.errorCode, contact.error);
+        }
         [HttpGet("{userId:int}/{contactUserId:int}")]
         public async Task<ActionResult<Contacts>> GetContact(int userId, int contactUserId)
         {

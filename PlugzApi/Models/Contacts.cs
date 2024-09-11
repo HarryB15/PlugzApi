@@ -66,6 +66,45 @@ namespace PlugzApi.Models
             await CommonService.Close(con, sdr);
             return contacts;
         }
+        public async Task<List<Contacts>> SearchContacts(string searchValue)
+        {
+            List<Contacts> contacts = new List<Contacts>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("SearchContacts", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@searchValue", SqlDbType.VarChar).Value = searchValue;
+                cmd.Parameters.Add("@existingContactIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    contacts.Add(new Contacts()
+                    {
+                        contactId = (int)sdr["ContactId"],
+                        lastMessageDate = (sdr["LastMessageDate"] != DBNull.Value) ? (DateTime)sdr["LastMessageDate"] : null,
+                        contactUser = new Users()
+                        {
+                            userId = (int)sdr["ContactUserId"],
+                            userName = (string)sdr["UserName"]
+                        }
+                    });
+                }
+                foreach (var contact in contacts)
+                {
+                    contact.profilePhoto.userId = contact.contactUser.userId;
+                    await contact.profilePhoto.GetProfilePhoto();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return contacts;
+        }
         public async Task GetContact()
         {
             try
