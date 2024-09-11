@@ -40,6 +40,7 @@ namespace PlugzApi.Models
                         senderUserId = (int)sdr["SenderUserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
                         sentDatetime = (DateTime)sdr["SentDatetime"],
+                        userIsSender = (int)sdr["SenderUserId"] == userId
                     });
                 }
 
@@ -53,6 +54,7 @@ namespace PlugzApi.Models
                         senderUserId = (int)sdr["UserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
                         sentDatetime = (DateTime)sdr["SentDatetime"],
+                        userIsSender = (int)sdr["UserId"] == userId,
                         offer = new Offer()
                         {
                             offerId = (int)sdr["OfferId"],
