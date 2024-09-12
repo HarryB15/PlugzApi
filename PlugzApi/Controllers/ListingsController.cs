@@ -48,6 +48,14 @@ namespace PlugzApi.Controllers
             var editable = await listing.IsListingEditable();
             return (listing.error == null) ? Ok(editable) : StatusCode(listing.error.errorCode, listing.error);
         }
+        [HttpGet("{listingId:int}/{getImages:bool}")]
+        public async Task<ActionResult> GetListing(int listingId, bool getImages)
+        {
+            Listings listing = new Listings();
+            listing.listingId = listingId;
+            await listing.GetListing(getImages);
+            return (listing.error == null) ? Ok(listing) : StatusCode(listing.error.errorCode, listing.error);
+        }
     }
 }
 

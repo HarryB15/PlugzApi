@@ -400,5 +400,63 @@ namespace PlugzApi.Models
                 await CommonService.Close(con, sdr);
             }
         }
+        public async Task GetListing(bool getImages)
+        {
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetListing", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId;
+                sdr = await cmd.ExecuteReaderAsync();
+                if (sdr.Read())
+                {
+                    userId = (int)sdr["UserId"];
+                    userName = (string)sdr["UserName"];
+                    listingDesc = (string)sdr["ListingDesc"];
+                    price = (decimal)sdr["Price"];
+                    minUserRatings = (byte)sdr["MinUserRatings"];
+                    minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null;
+                    isPublic = (bool)sdr["IsPublic"];
+                    createdDatetime = (DateTime)sdr["CreatedDatetime"];
+                    expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null;
+                    pickUpDropOff = (string)sdr["PickUpDropOff"];
+                    pickupLocation = (sdr["PickupLocationId"] == DBNull.Value) ? null : new Location()
+                    {
+                        locationId = (int)sdr["PickupLocationId"],
+                        address = (string)sdr["PickupAddress"],
+                        lat = (decimal)sdr["PickupLat"],
+                        lng = (decimal)sdr["PickupLng"],
+                    };
+                    location = new Location()
+                    {
+                        lat = (decimal)sdr["Lat"],
+                        lng = (decimal)sdr["Lng"]
+                    };
+
+                    if (getImages)
+                    {
+                        await GetImages();
+                    }
+                }
+                else
+                {
+                    error = new Error()
+                    {
+                        errorCode = StatusCodes.Status400BadRequest,
+                        errorMsg = "Could not find listing"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            finally
+            {
+                await CommonService.Close(con, sdr);
+            }
+        }
     }
 }
