@@ -105,25 +105,5 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
-        public async Task InsMessageMultiple()
-        {
-            try
-            {
-                con = await CommonService.Instance.Open();
-                cmd = new SqlCommand("InsMessageMultiple", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@senderUserId", SqlDbType.Int).Value = senderUserId;
-                cmd.Parameters.Add("@receiverUserIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
-                cmd.Parameters.Add("@listingId", SqlDbType.Int).Value = listingId > 0 ? listingId : null;
-                cmd.Parameters.Add("@postId", SqlDbType.Int).Value = postId > 0 ? postId : null;
-                await cmd.ExecuteNonQueryAsync();
-            }
-            catch (Exception ex)
-            {
-                CommonService.Log(ex);
-                error = CommonService.GetUnexpectedErrrorMsg();
-            }
-            await CommonService.Close(con, sdr);
-        }
     }
 }

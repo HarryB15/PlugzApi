@@ -15,12 +15,6 @@ namespace PlugzApi.Controllers
             await message.InsMessage();
             return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpPost("Multiple")]
-        public async Task<ActionResult> InsMessageMultiple(Messages message)
-        {
-            await message.InsMessageMultiple();
-            return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
-        }
         [HttpGet("{userId:int}/{contactUserId:int}/{listingId:int}")]
         public async Task<ActionResult> GetListingMessages(int userId, int contactUserId, int listingId)
         {
