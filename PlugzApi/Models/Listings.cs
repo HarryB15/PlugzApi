@@ -25,7 +25,7 @@ namespace PlugzApi.Models
         public List<Images> images { get; set; } = new List<Images>();
         public List<Keywords> keywords { get; set; } = new List<Keywords>();
 
-        public async Task InsListings(bool shareWithContacts)
+        public async Task InsListings()
         {
             try
             {
@@ -66,21 +66,6 @@ namespace PlugzApi.Models
                     {
                         await sdr.CloseAsync();
                         await InsKeywords();
-                    }
-                    if (shareWithContacts)
-                    {
-                        var contactObj = new Contacts();
-                        contactObj.userId = userId;
-                        var contacts = await contactObj.GetUsersContactsBasic();
-
-                        var messages = new Messages();
-                        messages.senderUserId = userId;
-                        messages.listingId = listingId;
-                        foreach (var contact in contacts.Where(c => c.isConnected))
-                        {
-                            messages.receiverUserId = contact.contactUser.userId;
-                            await messages.InsMessage();
-                        }
                     }
                 }
                 else

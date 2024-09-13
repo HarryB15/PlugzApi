@@ -44,14 +44,11 @@ namespace PlugzApi.Models
                         contactObj.userId = userId;
                         var contacts = await contactObj.GetUsersContactsBasic();
 
-                        var messages = new Messages();
-                        messages.postId = postId;
-                        messages.senderUserId = userId;
-                        foreach(var contact in contacts.Where(c => c.isConnected))
-                        {
-                            messages.receiverUserId = contact.contactUser.userId;
-                            await messages.InsMessage();
-                        }
+                        var message = new PostMessages();
+                        message.postId = postId;
+                        message.senderUserId = userId;
+                        message.ids = contacts.Select(c => c.contactUser.userId).ToList();
+                        await message.InsPostMessages();
                     }
                 }
             }

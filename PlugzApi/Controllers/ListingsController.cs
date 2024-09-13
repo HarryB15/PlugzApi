@@ -8,10 +8,10 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class ListingsController : ControllerBase
     {
-        [HttpPost("{shareWithContacts:bool}")]
-        public async Task<ActionResult> InsListings(Listings listing, bool shareWithContacts)
+        [HttpPost]
+        public async Task<ActionResult> InsListings(Listings listing)
         {
-            await listing.InsListings(shareWithContacts);
+            await listing.InsListings();
             return (listing.error == null) ? Ok(listing.listingId) : StatusCode(listing.error.errorCode, listing.error);
         }
         [HttpPost("UsersListings/{incExpired:bool}")]
