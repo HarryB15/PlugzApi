@@ -14,6 +14,9 @@ namespace PlugzApi.Models
         public DateTime sentDatetime { get; set; }
         public bool messageRead { get; set; }
         public DateTime? messageReadDatetime { get; set; }
+        public string userName { get; set; } = "";
+        public Posts post { get; set; } = new Posts();
+        public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
 
         public async Task InsPostMessages()
         {
@@ -33,6 +36,50 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+        }
+        public async Task<List<PostMessages>> GetUsersPostMessages(DateTime? maxSentDatetime)
+        {
+            var messages = new List<PostMessages>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetUsersPostMessages", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@maxSentDatetime", SqlDbType.DateTime).Value = maxSentDatetime;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    messages.Add(new PostMessages()
+                    {
+                        postMessageId = (int)sdr["PostMessageId"],
+                        postId = (int)sdr["PostId"],
+                        senderUserId = (int)sdr["SenderUserId"],
+                        receiverUserId = (int)sdr["ReceiverUserId"],
+                        sentDatetime = (DateTime)sdr["SentDatetime"],
+                        messageRead = (bool)sdr["MessageRead"],
+                        post = new Posts()
+                        {
+                            postId = (int)sdr["PostId"],
+                            postText = (string)sdr["PostText"],
+                        },
+                        userId = (int)sdr["UserId"],
+                        userName = (string)sdr["UserName"]
+                    });
+                }
+                foreach(var message in messages)
+                {
+                    message.profilePhoto.userId = message.userId;
+                    await message.profilePhoto.GetProfilePhoto();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return messages;
         }
     }
 }
