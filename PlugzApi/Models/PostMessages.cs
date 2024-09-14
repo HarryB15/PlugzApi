@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Graph.Models;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
@@ -49,26 +50,7 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@existingPostMessageIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 sdr = await cmd.ExecuteReaderAsync();
-                while (sdr.Read())
-                {
-                    messages.Add(new PostMessages()
-                    {
-                        postMessageId = (int)sdr["PostMessageId"],
-                        postId = (int)sdr["PostId"],
-                        senderUserId = (int)sdr["SenderUserId"],
-                        receiverUserId = (int)sdr["ReceiverUserId"],
-                        sentDatetime = (DateTime)sdr["SentDatetime"],
-                        messageRead = (bool)sdr["MessageRead"],
-                        post = new Posts()
-                        {
-                            postId = (int)sdr["PostId"],
-                            postText = (string)sdr["PostText"],
-                        },
-                        userId = (int)sdr["UserId"],
-                        userName = (string)sdr["UserName"],
-                        userIsSender = userId == (int)sdr["SenderUserId"]
-                    });
-                }
+                messages = ReadPostMessages(sdr);
                 foreach(var message in messages)
                 {
                     message.profilePhoto.userId = message.userId;
@@ -82,6 +64,59 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
             return messages;
+        }
+        public async Task<List<PostMessages>> SearchPostMessages(string searchValue)
+        {
+            var messages = new List<PostMessages>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("SearchPostMessages", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@searchValue", SqlDbType.VarChar).Value = searchValue;
+                cmd.Parameters.Add("@existingPostMessageIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
+                sdr = await cmd.ExecuteReaderAsync();
+                messages = ReadPostMessages(sdr);
+                foreach (var message in messages)
+                {
+                    message.profilePhoto.userId = message.userId;
+                    await message.profilePhoto.GetProfilePhoto();
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return messages;
+        }
+
+        private List<PostMessages> ReadPostMessages(SqlDataReader sdr)
+        {
+            var postMessages = new List<PostMessages>();
+            while (sdr.Read())
+            {
+                postMessages.Add(new PostMessages()
+                {
+                    postMessageId = (int)sdr["PostMessageId"],
+                    postId = (int)sdr["PostId"],
+                    senderUserId = (int)sdr["SenderUserId"],
+                    receiverUserId = (int)sdr["ReceiverUserId"],
+                    sentDatetime = (DateTime)sdr["SentDatetime"],
+                    messageRead = (bool)sdr["MessageRead"],
+                    post = new Posts()
+                    {
+                        postId = (int)sdr["PostId"],
+                        postText = (string)sdr["PostText"],
+                    },
+                    userId = (int)sdr["UserId"],
+                    userName = (string)sdr["UserName"],
+                    userIsSender = userId == (int)sdr["SenderUserId"]
+                });
+            }
+            return postMessages;
         }
     }
 }

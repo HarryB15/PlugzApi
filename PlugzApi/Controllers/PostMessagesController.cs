@@ -20,6 +20,12 @@ namespace PlugzApi.Controllers
             var messages = await message.GetUsersPostMessages();
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
+        [HttpPost("Search/{searchValue:string}")]
+        public async Task<ActionResult> SearchPostMessages(PostMessages message, string searchValue)
+        {
+            var messages = await message.SearchPostMessages(searchValue);
+            return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
+        }
     }
 }
 
