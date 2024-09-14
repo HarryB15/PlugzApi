@@ -38,7 +38,7 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
-        public async Task<List<PostMessages>> GetUsersPostMessages(DateTime? maxSentDatetime)
+        public async Task<List<PostMessages>> GetUsersPostMessages(int maxPostMessageId)
         {
             var messages = new List<PostMessages>();
             try
@@ -47,7 +47,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetUsersPostMessages", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                cmd.Parameters.Add("@maxSentDatetime", SqlDbType.DateTime).Value = maxSentDatetime;
+                cmd.Parameters.Add("@maxPostMessageId", SqlDbType.Int).Value = maxPostMessageId;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
