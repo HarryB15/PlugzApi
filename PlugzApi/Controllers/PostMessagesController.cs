@@ -14,12 +14,10 @@ namespace PlugzApi.Controllers
             await message.InsPostMessages();
             return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpGet("{userId:int}/{maxPostMessageId:int?}")]
-        public async Task<ActionResult> GetUsersPostMessages(int userId, int maxPostMessageId)
+        [HttpPost("GetUsersPostMessages")]
+        public async Task<ActionResult> GetUsersPostMessages(PostMessages message)
         {
-            var message = new PostMessages();
-            message.userId = userId;
-            var messages = await message.GetUsersPostMessages(maxPostMessageId);
+            var messages = await message.GetUsersPostMessages();
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
     }
