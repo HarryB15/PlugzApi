@@ -15,6 +15,7 @@ namespace PlugzApi.Models
         public bool messageRead { get; set; }
         public DateTime? messageReadDatetime { get; set; }
         public string userName { get; set; } = "";
+        public bool userIsSender { get; set; }
         public Posts post { get; set; } = new Posts();
         public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
 
@@ -64,7 +65,8 @@ namespace PlugzApi.Models
                             postText = (string)sdr["PostText"],
                         },
                         userId = (int)sdr["UserId"],
-                        userName = (string)sdr["UserName"]
+                        userName = (string)sdr["UserName"],
+                        userIsSender = userId == (int)sdr["SenderUserId"]
                     });
                 }
                 foreach(var message in messages)
