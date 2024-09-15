@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Graph.Models;
 using PlugzApi.Services;
 
 namespace PlugzApi.Models
@@ -20,6 +19,7 @@ namespace PlugzApi.Models
         public bool messageRead { get; set; }
         public Offer? offer { get; set; }
         public Listings? listing { get; set; }
+        public Posts? post { get; set; }
         public PostMessageResponse? postMessageResponse { get; set; }
 
         public async Task<List<Messages>> GetListingMessages(int contactUserId)
