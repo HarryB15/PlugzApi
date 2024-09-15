@@ -8,7 +8,7 @@ namespace PlugzApi.Controllers
     [ApiController]
     public class PostMessageResponseController: ControllerBase
 	{
-        [HttpGet]
+        [HttpGet("{postMessageId:int}")]
         public async Task<ActionResult> GetPostMessageResponses(int postMessageId)
         {
             PostMessageResponse response = new PostMessageResponse();
