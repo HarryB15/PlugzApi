@@ -9,6 +9,7 @@ namespace PlugzApi.Models
 	public class Messages: Base
 	{
         public int messageId { get; set; }
+        public int messageTypeId { get; set; }
         public int listingId { get; set; }
         public int postId { get; set; }
         public string? messageText { get; set; } = null;
@@ -18,6 +19,8 @@ namespace PlugzApi.Models
         public DateTime sentDatetime { get; set; }
         public bool messageRead { get; set; }
         public Offer? offer { get; set; }
+        public Listings? listing { get; set; }
+        public PostMessageResponse? postMessageResponse { get; set; }
 
         public async Task<List<Messages>> GetListingMessages(int contactUserId)
         {
@@ -36,6 +39,7 @@ namespace PlugzApi.Models
                     messages.Add(new Messages()
                     {
                         messageId = (int)sdr["MessageId"],
+                        messageTypeId = 1,
                         messageText = (sdr["MessageText"] != DBNull.Value) ? (string)sdr["MessageText"] : null,
                         senderUserId = (int)sdr["SenderUserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
@@ -50,6 +54,7 @@ namespace PlugzApi.Models
                     messages.Add(new Messages()
                     {
                         messageId = 0,
+                        messageTypeId = 4,
                         messageText = (sdr["OfferText"] != DBNull.Value) ? (string)sdr["OfferText"] : null,
                         senderUserId = (int)sdr["UserId"],
                         receiverUserId = (int)sdr["ReceiverUserId"],
@@ -104,6 +109,70 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+        }
+        public async Task<List<Messages>> GetPostMessageResponses(int postMessageId)
+        {
+            var messages = new List<Messages>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetPostMessageResponses", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@postMessageId", SqlDbType.Int).Value = postMessageId;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    messages.Add(new Messages()
+                    {
+                        postMessageResponse = new PostMessageResponse()
+                        {
+                            responseId = (int)sdr["ResponseId"],
+                            postMessageId = postMessageId,
+                        },
+                        messageTypeId = 3,
+                        sentDatetime = (DateTime)sdr["SentDatetime"],
+                        messageRead = (bool)sdr["MessageRead"],
+                        listing = new Listings()
+                        {
+                            listingId = (int)sdr["ListingId"],
+                            userId = (int)sdr["UserId"],
+                            userName = (string)sdr["UserName"],
+                            listingDesc = (string)sdr["ListingDesc"],
+                            price = (decimal)sdr["Price"],
+                            minUserRatings = (byte)sdr["MinUserRatings"],
+                            minPurchases = (sdr["MinPurchases"] != DBNull.Value) ? (short)sdr["MinPurchases"] : null,
+                            isPublic = (bool)sdr["IsPublic"],
+                            createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                            expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                            pickUpDropOff = (string)sdr["PickUpDropOff"],
+                            pickupLocation = (sdr["PickupLocationId"] == DBNull.Value) ? null : new Location()
+                            {
+                                locationId = (int)sdr["PickupLocationId"],
+                                address = (string)sdr["PickupAddress"],
+                                lat = (decimal)sdr["PickupLat"],
+                                lng = (decimal)sdr["PickupLng"],
+                            },
+                            location = new Location()
+                            {
+                                lat = (decimal)sdr["Lat"],
+                                lng = (decimal)sdr["Lng"],
+                            },
+                        }
+                    });
+                }
+                foreach (var message in messages)
+                {
+                    await message.listing!.GetImages();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return messages;
         }
     }
 }
