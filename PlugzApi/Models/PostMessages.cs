@@ -110,6 +110,16 @@ namespace PlugzApi.Models
                     {
                         postId = (int)sdr["PostId"],
                         postText = (string)sdr["PostText"],
+                        userId = (int)sdr["PostUserId"],
+                        price = (decimal)sdr["Price"],
+                        createdDatetime = (DateTime)sdr["CreatedDatetime"],
+                        expiryDatetime = (sdr["ExpiryDatetime"] != DBNull.Value) ? (DateTime)sdr["ExpiryDatetime"] : null,
+                        userName = (string)sdr["PostUserName"],
+                        location = new Location()
+                        {
+                            lat = (decimal)sdr["Lat"],
+                            lng = (decimal)sdr["Lng"],
+                        }
                     },
                     userId = (int)sdr["UserId"],
                     userName = (string)sdr["UserName"],
