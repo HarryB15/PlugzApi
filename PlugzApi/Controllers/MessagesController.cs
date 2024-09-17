@@ -24,11 +24,11 @@ namespace PlugzApi.Controllers
             var messages = await message.GetListingMessages(contactUserId);
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpGet("PostResponses/{postMessageId:int}")]
-        public async Task<ActionResult> GetPostMessageResponses(int postMessageId)
+        [HttpGet("PostResponses/{postMessageId:int}/{userId:int}")]
+        public async Task<ActionResult> GetPostMessageResponses(int postMessageId, int userId)
         {
             Messages message = new Messages();
-            var messages = await message.GetPostMessageResponses(postMessageId);
+            var messages = await message.GetPostMessageResponses(postMessageId, userId);
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
     }

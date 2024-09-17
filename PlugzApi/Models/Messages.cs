@@ -110,7 +110,7 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
         }
-        public async Task<List<Messages>> GetPostMessageResponses(int postMessageId)
+        public async Task<List<Messages>> GetPostMessageResponses(int postMessageId, int userId)
         {
             var messages = new List<Messages>();
             try
@@ -132,6 +132,7 @@ namespace PlugzApi.Models
                         messageTypeId = 3,
                         sentDatetime = (DateTime)sdr["SentDatetime"],
                         messageRead = (bool)sdr["MessageRead"],
+                        userIsSender = userId == (int)sdr["UserId"],
                         listing = new Listings()
                         {
                             listingId = (int)sdr["ListingId"],
