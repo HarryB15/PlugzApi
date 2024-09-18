@@ -128,9 +128,9 @@ namespace PlugzApi.Models
             }
             return postMessages;
         }
-        public async Task<List<int>> GetPostMessageOffers()
+        public async Task<List<Offer>> GetPostMessageOffers()
         {
-            var listingIds = new List<int>();
+            var offers = new List<Offer>();
             try
             {
                 con = await CommonService.Instance.Open();
@@ -140,7 +140,11 @@ namespace PlugzApi.Models
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
-                    listingIds.Add((int)sdr["ListingId"]);
+                    offers.Add(new Offer(){
+                        listingId = (int)sdr["ListingId"],
+                        offerId = (int)sdr["OfferId"],
+                        offerValue = (decimal)sdr["OfferValue"],
+                    });
                 }
             }
             catch (Exception ex)
@@ -149,7 +153,7 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
-            return listingIds;
+            return offers;
         }
     }
 }
