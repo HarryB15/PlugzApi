@@ -144,6 +144,7 @@ namespace PlugzApi.Models
                         listingId = (int)sdr["ListingId"],
                         offerId = (int)sdr["OfferId"],
                         offerValue = (decimal)sdr["OfferValue"],
+                        userId = (int)sdr["UserId"]
                     });
                 }
             }
