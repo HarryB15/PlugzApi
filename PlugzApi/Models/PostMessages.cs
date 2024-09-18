@@ -128,6 +128,29 @@ namespace PlugzApi.Models
             }
             return postMessages;
         }
+        public async Task<List<int>> GetPostMessageOffers()
+        {
+            var listingIds = new List<int>();
+            try
+            {
+                con = await CommonService.Instance.Open();
+                cmd = new SqlCommand("GetPostMessageOffers", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@postMessageId", SqlDbType.Int).Value = postMessageId;
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    listingIds.Add((int)sdr["ListingId"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommonService.Log(ex);
+                error = CommonService.GetUnexpectedErrrorMsg();
+            }
+            await CommonService.Close(con, sdr);
+            return listingIds;
+        }
     }
 }
 
