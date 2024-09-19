@@ -119,6 +119,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetPostMessageResponses", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@postMessageId", SqlDbType.Int).Value = postMessageId;
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {
