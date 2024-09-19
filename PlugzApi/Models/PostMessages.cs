@@ -17,6 +17,10 @@ namespace PlugzApi.Models
         public DateTime? messageReadDatetime { get; set; }
         public string userName { get; set; } = "";
         public bool userIsSender { get; set; }
+        public int? responseId { get; set; }
+        public int? offerId { get; set; }
+        public int? responseUserId { get; set; }
+        public string dispText { get; set; } = "";
         public Posts post { get; set; } = new Posts();
         public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
 
@@ -53,6 +57,7 @@ namespace PlugzApi.Models
                 messages = ReadPostMessages(sdr);
                 foreach(var message in messages)
                 {
+                    message.GetDispText(userId);
                     message.profilePhoto.userId = message.userId;
                     await message.profilePhoto.GetProfilePhoto();
                 }
@@ -80,6 +85,7 @@ namespace PlugzApi.Models
                 messages = ReadPostMessages(sdr);
                 foreach (var message in messages)
                 {
+                    message.GetDispText(userId);
                     message.profilePhoto.userId = message.userId;
                     await message.profilePhoto.GetProfilePhoto();
                 }
@@ -91,6 +97,18 @@ namespace PlugzApi.Models
             }
             await CommonService.Close(con, sdr);
             return messages;
+        }
+        private void GetDispText(int userId)
+        {
+            if(responseUserId != null && (responseId != null || offerId != null))
+            {
+                dispText = responseUserId == userId ? "You" : userName;
+                dispText += offerId != null ? " sent an offer" : " sent a listing";
+            }
+            else
+            {
+                dispText = post.postText;
+            }
         }
 
         private List<PostMessages> ReadPostMessages(SqlDataReader sdr)
@@ -123,7 +141,10 @@ namespace PlugzApi.Models
                     },
                     userId = (int)sdr["UserId"],
                     userName = (string)sdr["UserName"],
-                    userIsSender = userId == (int)sdr["SenderUserId"]
+                    userIsSender = userId == (int)sdr["SenderUserId"],
+                    responseId = (sdr["ResponseId"] != DBNull.Value) ? (int)sdr["ResponseId"] : null,
+                    offerId = (sdr["OfferId"] != DBNull.Value) ? (int)sdr["OfferId"] : null,
+                    responseUserId = (sdr["ResponseUserId"] != DBNull.Value) ? (int)sdr["ResponseUserId"] : null,
                 });
             }
             return postMessages;
