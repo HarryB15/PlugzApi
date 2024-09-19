@@ -149,7 +149,7 @@ namespace PlugzApi.Models
             }
             return postMessages;
         }
-        public async Task<List<Offer>> GetPostMessageOffers()
+        public async Task<List<Offer>> GetPostMessageOffers(int contactUserId)
         {
             var offers = new List<Offer>();
             try
@@ -158,6 +158,7 @@ namespace PlugzApi.Models
                 cmd = new SqlCommand("GetPostMessageOffers", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@postMessageId", SqlDbType.Int).Value = postMessageId;
+                cmd.Parameters.Add("@contactUserId", SqlDbType.Int).Value = contactUserId;
                 sdr = await cmd.ExecuteReaderAsync();
                 while (sdr.Read())
                 {

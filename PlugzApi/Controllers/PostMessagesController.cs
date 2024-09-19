@@ -26,12 +26,12 @@ namespace PlugzApi.Controllers
             var messages = await message.SearchPostMessages(searchValue);
             return (message.error == null) ? Ok(messages) : StatusCode(message.error.errorCode, message.error);
         }
-        [HttpGet("Offers/{postMessageId:int}")]
-        public async Task<ActionResult> GetPostMessageOffers(int postMessageId)
+        [HttpGet("Offers/{postMessageId:int}/{contactUserId:int}")]
+        public async Task<ActionResult> GetPostMessageOffers(int postMessageId, int contactUserId)
         {
             var postMessage = new PostMessages();
             postMessage.postMessageId = postMessageId;
-            var listingIds = await postMessage.GetPostMessageOffers();
+            var listingIds = await postMessage.GetPostMessageOffers(contactUserId);
             return (postMessage.error == null) ? Ok(listingIds) : StatusCode(postMessage.error.errorCode, postMessage.error);
         }
     }
