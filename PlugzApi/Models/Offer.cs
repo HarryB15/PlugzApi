@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Graph.Models;
 using PlugzApi.Services;
 using System.Data;
 using System.Data.SqlClient;
@@ -19,8 +18,10 @@ namespace PlugzApi.Models
         public bool userIsSender { get; set; }
         public DateTime sentDatetime { get; set; }
         public string userName { get; set; } = "";
+        public bool messageRead { get; set; }
         public Listings listing { get; set; } = new Listings();
         public Location? pickupLocation { get; set; }
+        public Messages? mostRecentMsg { get; set; }
         public async Task InsOffer(int receiverUserId)
 		{
             try
@@ -155,7 +156,17 @@ namespace PlugzApi.Models
                     offerText = sdr["OfferText"] != DBNull.Value ? (string)sdr["OfferText"] : null,
                     sentDatetime = (DateTime)sdr["SentDatetime"],
                     userName = (string)sdr["UserName"],
-                    userIsSender = (userId == (int)sdr["UserId"])
+                    userIsSender = (userId == (int)sdr["UserId"]),
+                    messageRead = (bool)sdr["MessageRead"],
+                    mostRecentMsg = sdr["MessageId"] == DBNull.Value ? null : new Messages()
+                    {
+                        messageId = (int)sdr["MessageId"],
+                        messageText = sdr["MessageText"] != DBNull.Value ? (string)sdr["MessageText"] : null,
+                        senderUserId = (int)sdr["SenderUserId"],
+                        receiverUserId = (int)sdr["MsgReceiverUserId"],
+                        sentDatetime = (DateTime)sdr["MsgSentDatetime"],
+                        userIsSender = (userId == (int)sdr["SenderUserId"]),
+                    }
                 });
             }
             return offers;
