@@ -9,11 +9,9 @@ namespace PlugzApi.Models
 	public class Contacts: Base
 	{
         public int contactId { get; set; }
-        public DateTime? lastMessageDate { get; set; }
         public int connectionStatus { get; set; }
         public bool isConnected { get; set; }
         public Users contactUser { get; set; } = new Users();
-        public Messages? mostRecentMsg { get; set; }
         public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
         public async Task<List<Contacts>> GetUsersContacts()
         {
@@ -32,24 +30,12 @@ namespace PlugzApi.Models
                     Contacts contact = new Contacts()
                     {
                         contactId = (int)sdr["ContactId"],
-                        lastMessageDate = (sdr["LastMessageDate"] != DBNull.Value) ? (DateTime)sdr["LastMessageDate"] : null,
                         contactUser = new Users()
                         {
                             userId = (int)sdr["ContactUserId"],
                             userName = (string)sdr["UserName"]
                         }
                     };
-                    if (sdr["MessageId"] != DBNull.Value)
-                    {
-                        contact.mostRecentMsg = new Messages()
-                        {
-                            messageId = (int)sdr["MessageId"],
-                            messageText = (sdr["MessageText"] != DBNull.Value) ? (string)sdr["MessageText"] : null,
-                            userIsSender = (bool)sdr["UserIsSender"],
-                            sentDatetime = (DateTime)sdr["SentDatetime"],
-                            messageRead = (bool)sdr["MessageRead"]
-                        };
-                    }
                     contacts.Add(contact);
                 }
                 foreach(var contact in contacts)
@@ -83,7 +69,6 @@ namespace PlugzApi.Models
                     contacts.Add(new Contacts()
                     {
                         contactId = (int)sdr["ContactId"],
-                        lastMessageDate = (sdr["LastMessageDate"] != DBNull.Value) ? (DateTime)sdr["LastMessageDate"] : null,
                         contactUser = new Users()
                         {
                             userId = (int)sdr["ContactUserId"],
