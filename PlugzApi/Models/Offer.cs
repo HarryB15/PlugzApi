@@ -19,6 +19,7 @@ namespace PlugzApi.Models
         public DateTime sentDatetime { get; set; }
         public string userName { get; set; } = "";
         public bool messageRead { get; set; }
+        public bool isUsersListing { get; set; }
         public Listings listing { get; set; } = new Listings();
         public Location? pickupLocation { get; set; }
         public Messages? mostRecentMsg { get; set; }
@@ -158,6 +159,7 @@ namespace PlugzApi.Models
                     userName = (string)sdr["UserName"],
                     userIsSender = (userId == (int)sdr["UserId"]),
                     messageRead = (bool)sdr["MessageRead"],
+                    isUsersListing = (int)sdr["ListingUserId"] == userId,
                     mostRecentMsg = sdr["MessageId"] == DBNull.Value ? null : new Messages()
                     {
                         messageId = (int)sdr["MessageId"],
