@@ -11,8 +11,8 @@ namespace PlugzApi.Controllers
         [HttpPost]
         public async Task<ActionResult> InsPostMessages(PostMessages message)
         {
-            await message.InsPostMessages();
-            return (message.error == null) ? Ok() : StatusCode(message.error.errorCode, message.error);
+            var postMessageIds = await message.InsPostMessages();
+            return (message.error == null) ? Ok(postMessageIds) : StatusCode(message.error.errorCode, message.error);
         }
         [HttpPost("GetUsersPostMessages")]
         public async Task<ActionResult> GetUsersPostMessages(PostMessages message)

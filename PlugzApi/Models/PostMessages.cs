@@ -24,8 +24,9 @@ namespace PlugzApi.Models
         public Posts post { get; set; } = new Posts();
         public ProfilePhotos profilePhoto { get; set; } = new ProfilePhotos();
 
-        public async Task InsPostMessages()
+        public async Task<List<int>> InsPostMessages()
         {
+            List<int> postMessageIds = new List<int>();
             try
             {
                 con = await CommonService.Instance.Open();
@@ -34,7 +35,11 @@ namespace PlugzApi.Models
                 cmd.Parameters.Add("@senderUserId", SqlDbType.Int).Value = senderUserId;
                 cmd.Parameters.Add("@receiverUserIds", SqlDbType.Structured).Value = CommonService.AddListInt(ids);
                 cmd.Parameters.Add("@postId", SqlDbType.Int).Value = postId;
-                await cmd.ExecuteNonQueryAsync();
+                sdr = await cmd.ExecuteReaderAsync();
+                while (sdr.Read())
+                {
+                    postMessageIds.Add((int)sdr["PostMessageId"]);
+                }
             }
             catch (Exception ex)
             {
@@ -42,6 +47,7 @@ namespace PlugzApi.Models
                 error = CommonService.GetUnexpectedErrrorMsg();
             }
             await CommonService.Close(con, sdr);
+            return postMessageIds;
         }
         public async Task<List<PostMessages>> GetUsersPostMessages()
         {
